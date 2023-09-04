@@ -112,7 +112,7 @@ public class EditItemPanel extends JPanel {
                 queuePanelItemSelectionComboBox.removeItem(uneditedItem);
 				queuePanelItemSelectionComboBox.addItem(editedItem.name);
                 queuePanel.setItemSelectionComboBox(queuePanelItemSelectionComboBox);
-				queuePanel.UpdateQueueList(queueItems);
+				queuePanel.updateQueueList(queueItems);
                 parentWindow.setQueuePanel(queuePanel);
 
 				contentPaneLayout.show(contentPane, "Queue Panel");
@@ -130,7 +130,7 @@ public class EditItemPanel extends JPanel {
         backToQueueButton = new JButton("Back to Queue");
         backToQueuePanel.add(backToQueueButton);
 	}
-    public void SetupEditItemPanel(QueueItem queueItem) {
+    public void setupEditItemPanel(QueueItem queueItem) {
         nameTextPane.setText(queueItem.name);
         detailsTextPane.setText(queueItem.details);
     }

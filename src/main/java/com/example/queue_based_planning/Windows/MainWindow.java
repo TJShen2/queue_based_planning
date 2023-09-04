@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
 
 import java.awt.CardLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -25,7 +27,7 @@ public class MainWindow extends JFrame {
 	public JPanel getContentPane() { return contentPane; }
 	public void setContentPane(JPanel value) { contentPane = value; }
 
-	private CardLayout contentPaneLayout = new CardLayout(0, 0);
+	private CardLayout contentPaneLayout;
 	public CardLayout getContentPaneLayout() { return contentPaneLayout; }
 	public void setContentPaneLayout(CardLayout value) { contentPaneLayout = value; }
 
@@ -37,7 +39,7 @@ public class MainWindow extends JFrame {
 	public LinkedHashMap<String, QueueItem> getArchivedItems() { return archivedItems; }
 	public void setArchivedItems(LinkedHashMap<String, QueueItem> value) { archivedItems = value; }
 
-	private java.lang.reflect.Type queueItemsType = new TypeToken<LinkedHashMap<String,QueueItem>>() {}.getType();
+	private java.lang.reflect.Type queueItemsType;
 	public java.lang.reflect.Type getQueueItemsType() { return queueItemsType; }
 	public void setQueueItemsType(java.lang.reflect.Type value) { queueItemsType = value; }
 
@@ -75,6 +77,7 @@ public class MainWindow extends JFrame {
 	private void initialize() {
 		queueItemsJsonHandler = new JsonHandler("queueItems.json");
 		archivedItemsJsonHandler = new JsonHandler("archivedItems.json");
+		queueItemsType = new TypeToken<LinkedHashMap<String,QueueItem>>() {}.getType();
 
 		try {
 			queueItems = (LinkedHashMap<String, QueueItem>) queueItemsJsonHandler.ReadObjectFromJson(queueItemsType);
@@ -90,24 +93,39 @@ public class MainWindow extends JFrame {
 		}
 		
 		frame = new JFrame();
-		frame.setBounds(100, 100, 960, 540);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		contentPaneLayout = new CardLayout(0, 0);
 		contentPane = new JPanel(contentPaneLayout, rootPaneCheckingEnabled);
-
 		addItemPanel = new AddItemPanel(this);
 		queuePanel = new QueuePanel(this);
 		editItemPanel = new EditItemPanel(this);
 
-       	contentPane.add(addItemPanel, "Add Item Panel");
+		frame.setBounds(100, 100, 960, 540);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		class WindowClosingEvent extends WindowAdapter {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				performCleanup();
+			}
+		}
+		frame.addWindowListener(new WindowClosingEvent());
+		
+		contentPane.add(addItemPanel, "Add Item Panel");
 		contentPane.add(queuePanel, "Queue Panel");
 		contentPane.add(editItemPanel, "Edit Item Panel");
-		//contentPaneLayout.addLayoutComponent(addItemPanel.contentPane, "Add Item Panel");
-		//contentPaneLayout.addLayoutComponent(queuePanel.contentPane, "Queue Panel");
+		
+		contentPaneLayout.addLayoutComponent(addItemPanel, "Add Item Panel");
+		contentPaneLayout.addLayoutComponent(queuePanel, "Queue Panel");
+		contentPaneLayout.addLayoutComponent(editItemPanel, "Edit Item Panel");
+
 		contentPane.setLayout(contentPaneLayout);
 		contentPaneLayout.show(contentPane, "Queue Panel");
 
 		frame.setContentPane(contentPane);
 		frame.setVisible(true);
+	}
+	private void performCleanup() {
+		queueItemsJsonHandler.WriteObjectAsJson(queueItems, queueItemsType);
+		archivedItemsJsonHandler.WriteObjectAsJson(archivedItems, queueItemsType);
 	}
 }

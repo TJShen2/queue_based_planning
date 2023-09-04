@@ -118,19 +118,22 @@ public class AddItemPanel extends JPanel {
                 JComboBox<String> queuePanelItemSelectionComboBox = queuePanel.getItemSelectionComboBox();
                 queuePanelItemSelectionComboBox.addItem(newItem.name);
                 queuePanel.setItemSelectionComboBox(queuePanelItemSelectionComboBox);
-				queuePanel.UpdateQueueList(queueItems);
+				queuePanel.updateQueueList(queueItems);
                 parentWindow.setQueuePanel(queuePanel);
 
 				Component[] infoEntryPanelComponents = infoEntryPanel.getComponents();
 
+                int i = 0;
 				for (Component comp : infoEntryPanelComponents) {
-					try {
-						JTextPane textComponent = (JTextPane) comp;
-						textComponent.setText("");
-					} catch (Exception e) {
-						String error = e.getMessage();
-						System.out.println(error);
-					}
+                    if (i % 2 != 0) {
+                        try {
+                            JTextPane textComponent = (JTextPane) comp;
+                            textComponent.setText("");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    i++;
 				}
 			}
 		});

@@ -26,7 +26,6 @@ import javax.swing.JTextPane;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 
-import com.example.queue_based_planning.JsonHandler;
 import com.example.queue_based_planning.QueueItem;
 import com.example.queue_based_planning.Windows.MainWindow;
 
@@ -38,9 +37,6 @@ public class QueuePanel extends JPanel {
 	private LinkedHashMap<String, QueueItem> queueItems;
 	private LinkedHashMap<String, QueueItem> archivedItems;
 	private CardLayout contentPaneLayout;
-	private java.lang.reflect.Type queueItemsType;
-	private JsonHandler queueItemsJsonHandler;
-	private JsonHandler archivedItemsJsonHandler;
 
 	private JPanel queueLabelPanel;
 	private JButton addItemButton;
@@ -63,17 +59,13 @@ public class QueuePanel extends JPanel {
 		contentPaneLayout = parentWindow.getContentPaneLayout();
 		queueItems = parentWindow.getQueueItems();
 		archivedItems = parentWindow.getArchivedItems();
-		queueItemsType = parentWindow.getQueueItemsType();
-		queueItemsJsonHandler = parentWindow.getQueueItemsJsonHandler();
-		archivedItemsJsonHandler = parentWindow.getArchivedItemsJsonHandler();
 
-		String[] queueItemNames = {};
+		String[] queueItemNames = new String[queueItems.size()];
 		int i = 0;
 		for (Map.Entry<String, QueueItem> item : queueItems.entrySet()) {
 			queueItemNames[i] = item.getKey();
 			i++;
 		}
-		UpdateQueueList(queueItems);
 
 		//Set up the panel
 		setMinimumSize(new Dimension(960,540));
@@ -140,8 +132,7 @@ public class QueuePanel extends JPanel {
 		selectedItemLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		actionButtonPanel.add(selectedItemLabel);
 		
-		itemSelectionComboBox = new JComboBox<String>();
-		//itemSelectionComboBox.addItem(queueItemNames);
+		itemSelectionComboBox = new JComboBox<String>(queueItemNames);
 		itemSelectionComboBox.setEditable(false);
 		actionButtonPanel.add(itemSelectionComboBox);
 		
@@ -177,7 +168,7 @@ public class QueuePanel extends JPanel {
 				archivedItems.put(keyOfFirstItem, removedValue);
 				parentWindow.setArchivedItems(archivedItems);
 				itemSelectionComboBox.removeItem(keyOfFirstItem);
-				UpdateQueueList(parentWindow.getQueueItems());
+				updateQueueList(parentWindow.getQueueItems());
 			}
 		});
 		removeSelectedItemButton.addActionListener(new ActionListener() {
@@ -186,7 +177,7 @@ public class QueuePanel extends JPanel {
 				queueItems.remove(itemToRemove);
 				parentWindow.setQueueItems(queueItems);
 				itemSelectionComboBox.removeItem(itemToRemove);
-				UpdateQueueList(parentWindow.getQueueItems());
+				updateQueueList(parentWindow.getQueueItems());
 			}
 		});
 		editSelectedItemButton.addActionListener(new ActionListener() {
@@ -194,27 +185,28 @@ public class QueuePanel extends JPanel {
 				String selectedItemName = (String) itemSelectionComboBox.getSelectedItem();
 				QueueItem selectedItem = (QueueItem) queueItems.get(selectedItemName);
 				EditItemPanel editItemPanel = parentWindow.getEditItemPanel();
-				editItemPanel.SetupEditItemPanel(selectedItem);
-				Object editItemPanelUneditedItem = editItemPanel.getUneditedItem();
-				editItemPanelUneditedItem = selectedItemName;
-				editItemPanel.setUneditiedItem(editItemPanelUneditedItem);
-				parentWindow.setEditItemPanel(editItemPanel);
-				contentPaneLayout.show(contentPane, "Edit Item Panel");
-				parentWindow.setContentPaneLayout(contentPaneLayout);
+				try {
+					editItemPanel.setupEditItemPanel(selectedItem);
+					Object editItemPanelUneditedItem = editItemPanel.getUneditedItem();
+					editItemPanelUneditedItem = selectedItemName;
+					editItemPanel.setUneditiedItem(editItemPanelUneditedItem);
+					parentWindow.setEditItemPanel(editItemPanel);
+					contentPaneLayout.show(contentPane, "Edit Item Panel");
+					parentWindow.setContentPaneLayout(contentPaneLayout);
+				} catch (NullPointerException e) {
+					System.out.println("No item is selected");
+				}
 			}
 		});
 		saveAndExitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				queueItemsJsonHandler.WriteObjectAsJson(queueItems, queueItemsType);
-				parentWindow.setQueueItemsJsonHandler(queueItemsJsonHandler);
-				archivedItemsJsonHandler.WriteObjectAsJson(archivedItems, queueItemsType);
-				parentWindow.setArchivedItemsJsonHandler(archivedItemsJsonHandler);
-
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 			}
 		});
+
+		updateQueueList(queueItems);
 	}
-	public void UpdateQueueList(LinkedHashMap<String,QueueItem> queueItems) {
+	public void updateQueueList(LinkedHashMap<String,QueueItem> queueItems) {
 		queueLabelPanel.removeAll();
 		JTextPane queueLabel = new JTextPane();
 		queueLabel.setEditable(false);
