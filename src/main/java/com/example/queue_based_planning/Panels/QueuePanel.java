@@ -1,5 +1,6 @@
 package com.example.queue_based_planning.Panels;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -162,34 +163,37 @@ public class QueuePanel extends JPanel {
 		});
 		archiveItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0)  {
+				queueItems = parentWindow.getQueueItems();
 				String keyOfFirstItem = (String) queueItems.keySet().toArray()[0];
 				QueueItem removedValue = queueItems.remove(keyOfFirstItem);
 				parentWindow.setQueueItems(queueItems);
 				archivedItems.put(keyOfFirstItem, removedValue);
 				parentWindow.setArchivedItems(archivedItems);
-				itemSelectionComboBox.removeItem(keyOfFirstItem);
+				updateItemSelectionComboBox();
 				updateQueueList(parentWindow.getQueueItems());
 			}
 		});
 		removeSelectedItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				queueItems = parentWindow.getQueueItems();
 				String itemToRemove = (String) parentWindow.getQueuePanel().itemSelectionComboBox.getSelectedItem();
 				queueItems.remove(itemToRemove);
 				parentWindow.setQueueItems(queueItems);
-				itemSelectionComboBox.removeItem(itemToRemove);
+				updateItemSelectionComboBox();
 				updateQueueList(parentWindow.getQueueItems());
 			}
 		});
 		editSelectedItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				queueItems = parentWindow.getQueueItems();
 				String selectedItemName = (String) itemSelectionComboBox.getSelectedItem();
-				QueueItem selectedItem = (QueueItem) queueItems.get(selectedItemName);
+				QueueItem selectedItem = queueItems.get(selectedItemName);
 				EditItemPanel editItemPanel = parentWindow.getEditItemPanel();
 				try {
 					editItemPanel.setupEditItemPanel(selectedItem);
-					Object editItemPanelUneditedItem = editItemPanel.getUneditedItem();
+					String editItemPanelUneditedItem = editItemPanel.getUneditedItem();
 					editItemPanelUneditedItem = selectedItemName;
-					editItemPanel.setUneditiedItem(editItemPanelUneditedItem);
+					editItemPanel.setUneditedItem(editItemPanelUneditedItem);
 					parentWindow.setEditItemPanel(editItemPanel);
 					contentPaneLayout.show(contentPane, "Edit Item Panel");
 					parentWindow.setContentPaneLayout(contentPaneLayout);
@@ -221,5 +225,13 @@ public class QueuePanel extends JPanel {
 		queueLabel.setText(queueLabelText);
 		queueLabelPanel.add(queueLabel);
 		queueLabelPanel.validate();
+	}
+	public void updateItemSelectionComboBox() {
+		Object[] keys = queueItems.keySet().toArray();
+		Arrays.sort(keys);
+		itemSelectionComboBox.removeAllItems();
+		for (Object key : keys) {
+			itemSelectionComboBox.addItem((String) key);
+		}
 	}
 }

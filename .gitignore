@@ -1,3 +1,10 @@
 #JSON files for storing user data
 queueItems.json
 archivedItems.json
+
+#Bytecode
+*.class
+
+#Other unnecessary files
+.DS_Store
+

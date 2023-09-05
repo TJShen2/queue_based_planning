@@ -19,7 +19,6 @@ import com.example.queue_based_planning.QueueItem;
 import com.example.queue_based_planning.Windows.MainWindow;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
 
@@ -111,13 +110,12 @@ public class AddItemPanel extends JPanel {
 
         addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+                queueItems = parentWindow.getQueueItems();
 				QueueItem newItem = new QueueItem(nameTextPane.getText(), detailsTextPane.getText());
 				queueItems.put(newItem.name, newItem);
                 parentWindow.setQueueItems(queueItems);
                 QueuePanel queuePanel = parentWindow.getQueuePanel();
-                JComboBox<String> queuePanelItemSelectionComboBox = queuePanel.getItemSelectionComboBox();
-                queuePanelItemSelectionComboBox.addItem(newItem.name);
-                queuePanel.setItemSelectionComboBox(queuePanelItemSelectionComboBox);
+                queuePanel.updateItemSelectionComboBox();
 				queuePanel.updateQueueList(queueItems);
                 parentWindow.setQueuePanel(queuePanel);
 

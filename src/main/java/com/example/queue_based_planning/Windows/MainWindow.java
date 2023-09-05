@@ -30,7 +30,7 @@ public class MainWindow extends JFrame {
 	private CardLayout contentPaneLayout;
 	public CardLayout getContentPaneLayout() { return contentPaneLayout; }
 	public void setContentPaneLayout(CardLayout value) { contentPaneLayout = value; }
-
+	
 	private LinkedHashMap<String, QueueItem> queueItems;
 	public LinkedHashMap<String, QueueItem> getQueueItems() { return queueItems; }
 	public void setQueueItems(LinkedHashMap<String, QueueItem> value) { queueItems = value; }

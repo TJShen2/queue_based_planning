@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +15,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
 
@@ -36,9 +36,9 @@ public class EditItemPanel extends JPanel {
     private JTextPane nameTextPane;
     private JTextPane detailsTextPane;
 
-    private Object uneditedItem;
-    public Object getUneditedItem() { return uneditedItem; }
-    public void setUneditiedItem(Object value) { uneditedItem = value; }
+    private String uneditedItem;
+    public String getUneditedItem() { return uneditedItem; }
+    public void setUneditedItem(String value) { uneditedItem = value; }
 
     public EditItemPanel(MainWindow parentWindow) {
 		contentPane = parentWindow.getContentPane();
@@ -103,15 +103,12 @@ public class EditItemPanel extends JPanel {
 
         editButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+                queueItems = parentWindow.getQueueItems();
 				QueueItem editedItem = new QueueItem(nameTextPane.getText(), detailsTextPane.getText());
-				queueItems.remove(uneditedItem);
-				queueItems.put(editedItem.name, editedItem);
+				queueItems = replaceItemInLinkedHashMap(queueItems, uneditedItem, nameTextPane.getText(), editedItem);
                 parentWindow.setQueueItems(queueItems);
                 QueuePanel queuePanel = parentWindow.getQueuePanel();
-                JComboBox<String> queuePanelItemSelectionComboBox = queuePanel.getItemSelectionComboBox();
-                queuePanelItemSelectionComboBox.removeItem(uneditedItem);
-				queuePanelItemSelectionComboBox.addItem(editedItem.name);
-                queuePanel.setItemSelectionComboBox(queuePanelItemSelectionComboBox);
+                queuePanel.getItemSelectionComboBox();
 				queuePanel.updateQueueList(queueItems);
                 parentWindow.setQueuePanel(queuePanel);
 
@@ -133,5 +130,17 @@ public class EditItemPanel extends JPanel {
     public void setupEditItemPanel(QueueItem queueItem) {
         nameTextPane.setText(queueItem.name);
         detailsTextPane.setText(queueItem.details);
+    }
+    private LinkedHashMap<String, QueueItem> replaceItemInLinkedHashMap(LinkedHashMap<String, QueueItem> originalHashMap, String keyOfItemToRemove, String keyToInsert, QueueItem valueToInsert) {
+        LinkedHashMap<String, QueueItem> newHashMap = new LinkedHashMap<String, QueueItem>();
+
+        for (Map.Entry<String,QueueItem> entry : originalHashMap.entrySet()) { 
+            if (entry.getKey().equals(keyOfItemToRemove)) {
+                newHashMap.put(keyToInsert, valueToInsert);
+            } else {
+                newHashMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return newHashMap;
     }
 }
