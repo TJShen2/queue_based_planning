@@ -7,7 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
 
+import com.example.queue_based_planning.LinkedHashMapEditor;
 import com.example.queue_based_planning.QueueItem;
 import com.example.queue_based_planning.Windows.MainWindow;
 
@@ -105,11 +105,12 @@ public class EditItemPanel extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
                 queueItems = parentWindow.getQueueItems();
 				QueueItem editedItem = new QueueItem(nameTextPane.getText(), detailsTextPane.getText());
-				queueItems = replaceItemInLinkedHashMap(queueItems, uneditedItem, nameTextPane.getText(), editedItem);
+				queueItems = LinkedHashMapEditor.replaceItem(queueItems, uneditedItem, nameTextPane.getText(), editedItem);
                 parentWindow.setQueueItems(queueItems);
                 QueuePanel queuePanel = parentWindow.getQueuePanel();
                 queuePanel.getItemSelectionComboBox();
 				queuePanel.updateQueueList(queueItems);
+                queuePanel.updateItemSelectionComboBox();
                 parentWindow.setQueuePanel(queuePanel);
 
 				contentPaneLayout.show(contentPane, "Queue Panel");
@@ -130,17 +131,5 @@ public class EditItemPanel extends JPanel {
     public void setupEditItemPanel(QueueItem queueItem) {
         nameTextPane.setText(queueItem.name);
         detailsTextPane.setText(queueItem.details);
-    }
-    private LinkedHashMap<String, QueueItem> replaceItemInLinkedHashMap(LinkedHashMap<String, QueueItem> originalHashMap, String keyOfItemToRemove, String keyToInsert, QueueItem valueToInsert) {
-        LinkedHashMap<String, QueueItem> newHashMap = new LinkedHashMap<String, QueueItem>();
-
-        for (Map.Entry<String,QueueItem> entry : originalHashMap.entrySet()) { 
-            if (entry.getKey().equals(keyOfItemToRemove)) {
-                newHashMap.put(keyToInsert, valueToInsert);
-            } else {
-                newHashMap.put(entry.getKey(), entry.getValue());
-            }
-        }
-        return newHashMap;
     }
 }

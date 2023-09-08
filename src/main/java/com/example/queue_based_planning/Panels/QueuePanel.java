@@ -27,6 +27,7 @@ import javax.swing.JTextPane;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 
+import com.example.queue_based_planning.LinkedHashMapEditor;
 import com.example.queue_based_planning.QueueItem;
 import com.example.queue_based_planning.Windows.MainWindow;
 
@@ -53,6 +54,7 @@ public class QueuePanel extends JPanel {
 	private JButton editSelectedItemButton;
 	private JPanel saveAndExitPanel;
 	private JButton saveAndExitButton;
+	private JButton moveFirstItemToBackOfQueueButton;
 
 	public QueuePanel(MainWindow parentWindow) {
 		frame = parentWindow.getFrame();
@@ -128,6 +130,10 @@ public class QueuePanel extends JPanel {
 		archiveItemButton = new JButton("Archive First Item");
 		archiveItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		actionButtonPanel.add(archiveItemButton);
+		
+		moveFirstItemToBackOfQueueButton = new JButton("Move First Item to Back of Queue");
+		moveFirstItemToBackOfQueueButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		actionButtonPanel.add(moveFirstItemToBackOfQueueButton);
 		
 		selectedItemLabel = new JLabel("Selected Item:");
 		selectedItemLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -205,6 +211,18 @@ public class QueuePanel extends JPanel {
 		saveAndExitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+			}
+		});
+		moveFirstItemToBackOfQueueButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				queueItems = parentWindow.getQueueItems();
+				String firstKeyInQueueItems = (String) queueItems.keySet().toArray()[0];
+				QueueItem firstValueInQueueItems = (QueueItem) queueItems.values().toArray()[0];
+				queueItems = LinkedHashMapEditor.removeItemAtIndex(queueItems, 0);
+				queueItems.put(firstKeyInQueueItems, firstValueInQueueItems);
+				parentWindow.setQueueItems(queueItems);
+				updateQueueList(queueItems);
+				updateItemSelectionComboBox();
 			}
 		});
 
