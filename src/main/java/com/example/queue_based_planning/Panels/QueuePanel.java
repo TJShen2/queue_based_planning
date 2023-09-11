@@ -8,7 +8,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -31,6 +30,7 @@ import com.example.queue_based_planning.LinkedHashMapEditor;
 import com.example.queue_based_planning.QueueItem;
 import com.example.queue_based_planning.Windows.MainWindow;
 import javax.swing.JList;
+import javax.swing.SwingConstants;
 
 public class QueuePanel extends JPanel {
 
@@ -56,7 +56,7 @@ public class QueuePanel extends JPanel {
 	private JPanel saveAndExitPanel;
 	private JButton saveAndExitButton;
 	private JButton moveFirstItemToBackOfQueueButton;
-	private JList list;
+	private JList<String> list;
 
 	public QueuePanel(MainWindow parentWindow) {
 		frame = parentWindow.getFrame();
@@ -73,25 +73,21 @@ public class QueuePanel extends JPanel {
 		}
 
 		//Set up the panel
-		setMinimumSize(new Dimension(960,540));
 		setBackground(new Color(255, 246, 187));
 		setBounds(100, 100, 960, 540);
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		//Set up components
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
-		gbl_contentPane.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 1.0};
-		gbl_contentPane.rowHeights = new int[] {30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30};
-		gbl_contentPane.columnWidths = new int[] {225, 250, 10, 250, 225};
+		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 0.0};
+		gbl_contentPane.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0};
 		setLayout(gbl_contentPane);
 		
 		JPanel titleLabelPanel = new JPanel();
-		titleLabelPanel.setPreferredSize(new Dimension(100, 10));
 		GridBagConstraints gbc_titleLabelPanel = new GridBagConstraints();
+		gbc_titleLabelPanel.gridwidth = 3;
 		gbc_titleLabelPanel.gridy = 1;
 		gbc_titleLabelPanel.insets = new Insets(0, 0, 5, 5);
-		gbc_titleLabelPanel.gridwidth = 3;
 		gbc_titleLabelPanel.gridx = 1;
 		add(titleLabelPanel, gbc_titleLabelPanel);
 		titleLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 1, 1));
@@ -102,7 +98,6 @@ public class QueuePanel extends JPanel {
 		queueLabelScrollPane = new JScrollPane();
 		GridBagConstraints gbc_queueLabelScrollPane = new GridBagConstraints();
 		gbc_queueLabelScrollPane.fill = GridBagConstraints.BOTH;
-		gbc_queueLabelScrollPane.gridheight = 7;
 		gbc_queueLabelScrollPane.insets = new Insets(0, 0, 5, 5);
 		gbc_queueLabelScrollPane.gridx = 1;
 		gbc_queueLabelScrollPane.gridy = 3;
@@ -114,9 +109,7 @@ public class QueuePanel extends JPanel {
 		queueLabelPanel.setLayout(new BoxLayout(queueLabelPanel, BoxLayout.Y_AXIS));
 		
 		JPanel actionButtonPanel = new JPanel();
-		actionButtonPanel.setPreferredSize(new Dimension(250, 400));
 		GridBagConstraints gbc_actionButtonPanel = new GridBagConstraints();
-		gbc_actionButtonPanel.gridheight = 7;
 		gbc_actionButtonPanel.insets = new Insets(0, 0, 5, 5);
 		gbc_actionButtonPanel.gridx = 3;
 		gbc_actionButtonPanel.gridy = 3;
@@ -127,15 +120,8 @@ public class QueuePanel extends JPanel {
 		addItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		actionButtonPanel.add(addItemButton);
 		
-		archiveItemButton = new JButton("Archive First Item");
-		archiveItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		actionButtonPanel.add(archiveItemButton);
-		
-		moveFirstItemToBackOfQueueButton = new JButton("Move First Item to Back of Queue");
-		moveFirstItemToBackOfQueueButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		actionButtonPanel.add(moveFirstItemToBackOfQueueButton);
-		
 		selectedItemLabel = new JLabel("Selected Item:");
+		selectedItemLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		selectedItemLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		actionButtonPanel.add(selectedItemLabel);
 		
@@ -143,38 +129,9 @@ public class QueuePanel extends JPanel {
 		itemSelectionComboBox.setEditable(false);
 		actionButtonPanel.add(itemSelectionComboBox);
 		
-		editSelectedItemButton = new JButton("Edit Selected Item");
-		editSelectedItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		actionButtonPanel.add(editSelectedItemButton);
-		
-		removeSelectedItemButton = new JButton("Remove Selected Item");
-		removeSelectedItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		actionButtonPanel.add(removeSelectedItemButton);
-		
-		list = new JList();
-		GridBagConstraints gbc_list = new GridBagConstraints();
-		gbc_list.insets = new Insets(0, 0, 0, 5);
-		gbc_list.fill = GridBagConstraints.BOTH;
-		gbc_list.gridx = 1;
-		gbc_list.gridy = 11;
-		add(list, gbc_list);
-		
-		saveAndExitPanel = new JPanel();
-		GridBagConstraints gbc_saveAndExitPanel = new GridBagConstraints();
-		gbc_saveAndExitPanel.anchor = GridBagConstraints.SOUTHEAST;
-		gbc_saveAndExitPanel.gridx = 4;
-		gbc_saveAndExitPanel.gridy = 11;
-		add(saveAndExitPanel, gbc_saveAndExitPanel);
-		
-		saveAndExitButton = new JButton("Save & Exit");
-		saveAndExitPanel.add(saveAndExitButton);
-
-		addItemButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				contentPaneLayout.show(parentWindow.getContentPane(), "Add Item Panel");
-				parentWindow.setContentPaneLayout(contentPaneLayout);
-			}
-		});
+		archiveItemButton = new JButton("Archive Selected Item");
+		archiveItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		actionButtonPanel.add(archiveItemButton);
 		archiveItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0)  {
 				queueItems = parentWindow.getQueueItems();
@@ -185,6 +142,47 @@ public class QueuePanel extends JPanel {
 				parentWindow.setArchivedItems(archivedItems);
 				updateItemSelectionComboBox();
 				updateQueueList(parentWindow.getQueueItems());
+			}
+		});
+		
+		moveFirstItemToBackOfQueueButton = new JButton("Move Selected Item to Back of Queue");
+		moveFirstItemToBackOfQueueButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		actionButtonPanel.add(moveFirstItemToBackOfQueueButton);
+		moveFirstItemToBackOfQueueButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				queueItems = parentWindow.getQueueItems();
+				String firstKeyInQueueItems = (String) queueItems.keySet().toArray()[0];
+				QueueItem firstValueInQueueItems = (QueueItem) queueItems.values().toArray()[0];
+				queueItems = LinkedHashMapEditor.removeItemAtIndex(queueItems, 0);
+				queueItems.put(firstKeyInQueueItems, firstValueInQueueItems);
+				parentWindow.setQueueItems(queueItems);
+				updateQueueList(queueItems);
+				updateItemSelectionComboBox();
+			}
+		});
+		
+		editSelectedItemButton = new JButton("Edit Selected Item");
+		editSelectedItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		actionButtonPanel.add(editSelectedItemButton);
+		
+		removeSelectedItemButton = new JButton("Remove Selected Item");
+		removeSelectedItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		actionButtonPanel.add(removeSelectedItemButton);
+		
+		saveAndExitPanel = new JPanel();
+		GridBagConstraints gbc_saveAndExitPanel = new GridBagConstraints();
+		gbc_saveAndExitPanel.anchor = GridBagConstraints.SOUTHEAST;
+		gbc_saveAndExitPanel.gridx = 3;
+		gbc_saveAndExitPanel.gridy = 5;
+		add(saveAndExitPanel, gbc_saveAndExitPanel);
+		
+		saveAndExitButton = new JButton("Save & Exit");
+		saveAndExitPanel.add(saveAndExitButton);
+
+		addItemButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				contentPaneLayout.show(parentWindow.getContentPane(), "Add Item Panel");
+				parentWindow.setContentPaneLayout(contentPaneLayout);
 			}
 		});
 		removeSelectedItemButton.addActionListener(new ActionListener() {
@@ -221,35 +219,26 @@ public class QueuePanel extends JPanel {
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 			}
 		});
-		moveFirstItemToBackOfQueueButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				queueItems = parentWindow.getQueueItems();
-				String firstKeyInQueueItems = (String) queueItems.keySet().toArray()[0];
-				QueueItem firstValueInQueueItems = (QueueItem) queueItems.values().toArray()[0];
-				queueItems = LinkedHashMapEditor.removeItemAtIndex(queueItems, 0);
-				queueItems.put(firstKeyInQueueItems, firstValueInQueueItems);
-				parentWindow.setQueueItems(queueItems);
-				updateQueueList(queueItems);
-				updateItemSelectionComboBox();
-			}
-		});
 
 		updateQueueList(queueItems);
 	}
 	public void updateQueueList(LinkedHashMap<String,QueueItem> queueItems) {
 		queueLabelPanel.removeAll();
-		JTextPane queueLabel = new JTextPane();
-		queueLabel.setEditable(false);
-		String queueLabelText = "";
+
+		list = new JList<String>();
+		queueLabelPanel.add(list);
 
 		for (Map.Entry<String,QueueItem> itemEntry : queueItems.entrySet()) {
 			//JEditorPane queueLabel = new JEditorPane("text.rtf.RTFEditorKit", item.name + ":\n" + item.details);
+			String queueLabelText = "";
 			QueueItem item = itemEntry.getValue();
+			JTextPane queueTextPane = new JTextPane();
+
 			queueLabelText += item.name + ":\n" + item.details;
-			queueLabelText += "\n";
+			queueTextPane.setEditable(false);
+			queueTextPane.setText(queueLabelText);
+			list.add(queueTextPane);
 		}
-		queueLabel.setText(queueLabelText);
-		queueLabelPanel.add(queueLabel);
 		queueLabelPanel.validate();
 	}
 	public void updateItemSelectionComboBox() {

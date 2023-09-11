@@ -21,6 +21,7 @@ import com.example.queue_based_planning.Windows.MainWindow;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 
 public class AddItemPanel extends JPanel {
 
@@ -41,47 +42,42 @@ public class AddItemPanel extends JPanel {
 		queueItems = parentWindow.getQueueItems();
         
         //Set up the panel
-        setMinimumSize(new Dimension(960, 540));
-        //pack();
         setBounds(100, 100, 960, 540);
 		setBackground(new Color(255, 246, 187));
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 		
         //Content pane constraints
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
-		gbl_contentPane.columnWeights = new double[]{0.0, 0.0, 1.0};
-		gbl_contentPane.rowHeights = new int[] {20, 20, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.columnWidths = new int[] {150, 660, 150};
+		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+		gbl_contentPane.columnWeights = new double[]{0.0};
         setLayout(gbl_contentPane);
         
         //Panels
         infoEntryPanel = new JPanel();
         GridBagConstraints gbc_infoEntryPanel = new GridBagConstraints();
         gbc_infoEntryPanel.weighty = 1.0;
-        gbc_infoEntryPanel.weightx = 1.0;
         gbc_infoEntryPanel.insets = new Insets(0, 0, 5, 5);
         gbc_infoEntryPanel.fill = GridBagConstraints.BOTH;
-        gbc_infoEntryPanel.gridx = 1;
-        gbc_infoEntryPanel.gridy = 5;
+        gbc_infoEntryPanel.gridx = 0;
+        gbc_infoEntryPanel.gridy = 3;
         add(infoEntryPanel, gbc_infoEntryPanel);
         infoEntryPanel.setLayout(new GridLayout(2, 2, 0, 25));
-        infoEntryPanel.setPreferredSize(new Dimension(400, 100));
 
         JPanel backToQueuePanel = new JPanel();
         GridBagConstraints gbc_backToQueuePanel = new GridBagConstraints();
-        gbc_backToQueuePanel.anchor = GridBagConstraints.SOUTH;
-        gbc_backToQueuePanel.gridx = 2;
-        gbc_backToQueuePanel.gridy = 11;
+        gbc_backToQueuePanel.weightx = 1.0;
+        gbc_backToQueuePanel.anchor = GridBagConstraints.SOUTHEAST;
+        gbc_backToQueuePanel.gridx = 0;
+        gbc_backToQueuePanel.gridy = 7;
         add(backToQueuePanel, gbc_backToQueuePanel);
         
         //Labels
         JLabel titleLabel = new JLabel("Add New Item");
-        titleLabel.setPreferredSize(new Dimension(600, 50));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         GridBagConstraints gbc_titleLabel = new GridBagConstraints();
         gbc_titleLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_titleLabel.gridx = 1;
-        gbc_titleLabel.gridy = 2;
+        gbc_titleLabel.gridx = 0;
+        gbc_titleLabel.gridy = 1;
         add(titleLabel, gbc_titleLabel);
 
         JLabel nameLabel = new JLabel("Name of Item:");
@@ -104,8 +100,8 @@ public class AddItemPanel extends JPanel {
         addButton = new JButton("Add");
         GridBagConstraints gbc_addButton = new GridBagConstraints();
         gbc_addButton.insets = new Insets(0, 0, 5, 5);
-        gbc_addButton.gridx = 1;
-        gbc_addButton.gridy = 7;
+        gbc_addButton.gridx = 0;
+        gbc_addButton.gridy = 5;
         add(addButton, gbc_addButton);
 
         addButton.addActionListener(new ActionListener() {

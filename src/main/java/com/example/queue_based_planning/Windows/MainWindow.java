@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
 
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -93,6 +94,7 @@ public class MainWindow extends JFrame {
 		}
 		
 		frame = new JFrame();
+		frame.pack();
 		contentPaneLayout = new CardLayout(0, 0);
 		contentPane = new JPanel(contentPaneLayout, rootPaneCheckingEnabled);
 		addItemPanel = new AddItemPanel(this);
@@ -100,6 +102,7 @@ public class MainWindow extends JFrame {
 		editItemPanel = new EditItemPanel(this);
 
 		frame.setBounds(100, 100, 960, 540);
+		frame.setMinimumSize(new Dimension(480, 270));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		class WindowClosingEvent extends WindowAdapter {
