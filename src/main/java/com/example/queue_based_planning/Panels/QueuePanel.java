@@ -30,6 +30,7 @@ import javax.swing.JFrame;
 import com.example.queue_based_planning.LinkedHashMapEditor;
 import com.example.queue_based_planning.QueueItem;
 import com.example.queue_based_planning.Windows.MainWindow;
+import javax.swing.JList;
 
 public class QueuePanel extends JPanel {
 
@@ -55,6 +56,7 @@ public class QueuePanel extends JPanel {
 	private JPanel saveAndExitPanel;
 	private JButton saveAndExitButton;
 	private JButton moveFirstItemToBackOfQueueButton;
+	private JList list;
 
 	public QueuePanel(MainWindow parentWindow) {
 		frame = parentWindow.getFrame();
@@ -100,7 +102,6 @@ public class QueuePanel extends JPanel {
 		queueLabelScrollPane = new JScrollPane();
 		GridBagConstraints gbc_queueLabelScrollPane = new GridBagConstraints();
 		gbc_queueLabelScrollPane.fill = GridBagConstraints.BOTH;
-		gbc_queueLabelScrollPane.weightx = 1.0;
 		gbc_queueLabelScrollPane.gridheight = 7;
 		gbc_queueLabelScrollPane.insets = new Insets(0, 0, 5, 5);
 		gbc_queueLabelScrollPane.gridx = 1;
@@ -115,7 +116,6 @@ public class QueuePanel extends JPanel {
 		JPanel actionButtonPanel = new JPanel();
 		actionButtonPanel.setPreferredSize(new Dimension(250, 400));
 		GridBagConstraints gbc_actionButtonPanel = new GridBagConstraints();
-		gbc_actionButtonPanel.weightx = 1.0;
 		gbc_actionButtonPanel.gridheight = 7;
 		gbc_actionButtonPanel.insets = new Insets(0, 0, 5, 5);
 		gbc_actionButtonPanel.gridx = 3;
@@ -150,6 +150,14 @@ public class QueuePanel extends JPanel {
 		removeSelectedItemButton = new JButton("Remove Selected Item");
 		removeSelectedItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		actionButtonPanel.add(removeSelectedItemButton);
+		
+		list = new JList();
+		GridBagConstraints gbc_list = new GridBagConstraints();
+		gbc_list.insets = new Insets(0, 0, 0, 5);
+		gbc_list.fill = GridBagConstraints.BOTH;
+		gbc_list.gridx = 1;
+		gbc_list.gridy = 11;
+		add(list, gbc_list);
 		
 		saveAndExitPanel = new JPanel();
 		GridBagConstraints gbc_saveAndExitPanel = new GridBagConstraints();

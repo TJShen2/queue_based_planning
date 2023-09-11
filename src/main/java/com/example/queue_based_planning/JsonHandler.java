@@ -8,6 +8,7 @@ import java.lang.reflect.Type;
 import java.util.Scanner;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.stream.JsonWriter;
 
@@ -19,7 +20,7 @@ public class JsonHandler {
 	private JsonWriter jsonSerializer;
 
     public JsonHandler(String filename) {
-        jsonHandler = new Gson();
+        jsonHandler = new GsonBuilder().setPrettyPrinting().create();
         selectedFile = new File(filename);
     }
     public String GetJsonRepresentation(Object objectToSerialize) {
