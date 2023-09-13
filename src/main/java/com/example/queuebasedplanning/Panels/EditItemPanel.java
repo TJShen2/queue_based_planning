@@ -1,4 +1,4 @@
-package com.example.queue_based_planning.Panels;
+package com.example.queuebasedplanning.Panels;
 
 import java.util.LinkedHashMap;
 
@@ -19,9 +19,9 @@ import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 
-import com.example.queue_based_planning.LinkedHashMapEditor;
-import com.example.queue_based_planning.QueueItem;
-import com.example.queue_based_planning.Windows.MainWindow;
+import com.example.queuebasedplanning.LinkedHashMapEditor;
+import com.example.queuebasedplanning.QueueItem;
+import com.example.queuebasedplanning.Windows.MainWindow;
 
 public class EditItemPanel extends JPanel {
 

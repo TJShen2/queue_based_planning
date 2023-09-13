@@ -1,4 +1,4 @@
-package com.example.queue_based_planning;
+package com.example.queuebasedplanning;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

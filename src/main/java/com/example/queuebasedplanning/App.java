@@ -1,8 +1,8 @@
-package com.example.queue_based_planning;
+package com.example.queuebasedplanning;
 
 import java.awt.EventQueue;
 
-import com.example.queue_based_planning.Windows.MainWindow;
+import com.example.queuebasedplanning.Windows.MainWindow;
 
 public class App {
     /**

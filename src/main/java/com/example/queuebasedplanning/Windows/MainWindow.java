@@ -1,4 +1,4 @@
-package com.example.queue_based_planning.Windows;
+package com.example.queuebasedplanning.Windows;
 
 import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
@@ -11,11 +11,11 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.example.queue_based_planning.JsonHandler;
-import com.example.queue_based_planning.QueueItem;
-import com.example.queue_based_planning.Panels.AddItemPanel;
-import com.example.queue_based_planning.Panels.EditItemPanel;
-import com.example.queue_based_planning.Panels.QueuePanel;
+import com.example.queuebasedplanning.JsonHandler;
+import com.example.queuebasedplanning.QueueItem;
+import com.example.queuebasedplanning.Panels.AddItemPanel;
+import com.example.queuebasedplanning.Panels.EditItemPanel;
+import com.example.queuebasedplanning.Panels.QueuePanel;
 import com.google.gson.reflect.TypeToken;
 
 public class MainWindow extends JFrame {

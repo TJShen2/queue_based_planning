@@ -1,4 +1,4 @@
-package com.example.queue_based_planning;
+package com.example.queuebasedplanning;
 
 import java.io.File;
 import java.io.FileNotFoundException;

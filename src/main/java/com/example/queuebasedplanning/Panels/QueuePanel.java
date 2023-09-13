@@ -1,4 +1,4 @@
-package com.example.queue_based_planning.Panels;
+package com.example.queuebasedplanning.Panels;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,8 +27,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JFrame;
 import javax.swing.JList;
 
-import com.example.queue_based_planning.QueueItem;
-import com.example.queue_based_planning.Windows.MainWindow;
+import com.example.queuebasedplanning.QueueItem;
+import com.example.queuebasedplanning.Windows.MainWindow;
 
 public class QueuePanel extends JPanel {
 
@@ -231,7 +231,9 @@ public class QueuePanel extends JPanel {
 				queueItems.put(item, removedItem);
 			} else if (mode == "archive") {
 				archivedItems.put(item, removedItem);
-			} 
+			} else if (mode == "remove") {
+				assert true;
+			}
 		}
 		updateQueueList();
 	}
