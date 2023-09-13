@@ -1,8 +1,8 @@
 package com.example.queue_based_planning.Panels;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.List;
 
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -14,6 +14,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -21,49 +22,46 @@ import javax.swing.JButton;
 //import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JList;
 
-import com.example.queue_based_planning.LinkedHashMapEditor;
 import com.example.queue_based_planning.QueueItem;
 import com.example.queue_based_planning.Windows.MainWindow;
-import javax.swing.JList;
-import javax.swing.SwingConstants;
 
 public class QueuePanel extends JPanel {
 
 	//From parent window
+	private MainWindow parent;
 	private JFrame frame;
 	private JPanel contentPane;
 	private LinkedHashMap<String, QueueItem> queueItems;
 	private LinkedHashMap<String, QueueItem> archivedItems;
 	private CardLayout contentPaneLayout;
+	private EditItemPanel editItemPanel;
 
-	private JPanel queueLabelPanel;
+	private JPanel queueItemsPanel;
 	private JButton addItemButton;
 
 	private JScrollPane queueLabelScrollPane;
-	private JComboBox<String> itemSelectionComboBox;
-	public JComboBox<String> getItemSelectionComboBox() { return itemSelectionComboBox; }
-	public void setItemSelectionComboBox(JComboBox<String> value) { itemSelectionComboBox = value; }
 
 	private JButton removeSelectedItemButton;
-	private JButton archiveItemButton;
-	private JLabel selectedItemLabel;
+	private JButton archiveSelectedItemButton;
 	private JButton editSelectedItemButton;
 	private JPanel saveAndExitPanel;
 	private JButton saveAndExitButton;
-	private JButton moveFirstItemToBackOfQueueButton;
-	private JList<String> list;
+	private JButton moveSelectedItemToBackOfQueueButton;
+	private JList<String> queueItemsList;
 
-	public QueuePanel(MainWindow parentWindow) {
-		frame = parentWindow.getFrame();
-		contentPane = parentWindow.getContentPane();
-		contentPaneLayout = parentWindow.getContentPaneLayout();
-		queueItems = parentWindow.getQueueItems();
-		archivedItems = parentWindow.getArchivedItems();
+	public QueuePanel(MainWindow parent) {
+		this.parent = parent;
+		frame = parent.getFrame();
+		contentPane = parent.getContentPane();
+		contentPaneLayout = parent.getContentPaneLayout();
+		editItemPanel = parent.getEditItemPanel();
+		queueItems = parent.getQueueItems();
+		archivedItems = parent.getArchivedItems();
 
 		String[] queueItemNames = new String[queueItems.size()];
 		int i = 0;
@@ -103,10 +101,9 @@ public class QueuePanel extends JPanel {
 		gbc_queueLabelScrollPane.gridy = 3;
 		add(queueLabelScrollPane, gbc_queueLabelScrollPane);
 		
-		queueLabelPanel = new JPanel();
-		//queueLabelPanel.setPreferredSize(new Dimension(250, 400));
-		queueLabelScrollPane.setViewportView(queueLabelPanel);
-		queueLabelPanel.setLayout(new BoxLayout(queueLabelPanel, BoxLayout.Y_AXIS));
+		queueItemsPanel = new JPanel();
+		queueItemsPanel.setLayout(new BorderLayout(0, 0));
+		queueLabelScrollPane.setViewportView(queueItemsPanel);
 		
 		JPanel actionButtonPanel = new JPanel();
 		GridBagConstraints gbc_actionButtonPanel = new GridBagConstraints();
@@ -120,44 +117,25 @@ public class QueuePanel extends JPanel {
 		addItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		actionButtonPanel.add(addItemButton);
 		
-		selectedItemLabel = new JLabel("Selected Item:");
-		selectedItemLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		selectedItemLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		actionButtonPanel.add(selectedItemLabel);
-		
-		itemSelectionComboBox = new JComboBox<String>(queueItemNames);
-		itemSelectionComboBox.setEditable(false);
-		actionButtonPanel.add(itemSelectionComboBox);
-		
-		archiveItemButton = new JButton("Archive Selected Item");
-		archiveItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		actionButtonPanel.add(archiveItemButton);
-		archiveItemButton.addActionListener(new ActionListener() {
+		archiveSelectedItemButton = new JButton("Archive Selected Item");
+		archiveSelectedItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		actionButtonPanel.add(archiveSelectedItemButton);
+		archiveSelectedItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0)  {
-				queueItems = parentWindow.getQueueItems();
-				String keyOfFirstItem = (String) queueItems.keySet().toArray()[0];
-				QueueItem removedValue = queueItems.remove(keyOfFirstItem);
-				parentWindow.setQueueItems(queueItems);
-				archivedItems.put(keyOfFirstItem, removedValue);
-				parentWindow.setArchivedItems(archivedItems);
-				updateItemSelectionComboBox();
-				updateQueueList(parentWindow.getQueueItems());
+				queueItems = parent.getQueueItems();
+				performItemOperation("archive");
+				parent.setQueueItems(queueItems);
 			}
 		});
 		
-		moveFirstItemToBackOfQueueButton = new JButton("Move Selected Item to Back of Queue");
-		moveFirstItemToBackOfQueueButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		actionButtonPanel.add(moveFirstItemToBackOfQueueButton);
-		moveFirstItemToBackOfQueueButton.addActionListener(new ActionListener() {
+		moveSelectedItemToBackOfQueueButton = new JButton("Move Selected Item to Back of Queue");
+		moveSelectedItemToBackOfQueueButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		actionButtonPanel.add(moveSelectedItemToBackOfQueueButton);
+		moveSelectedItemToBackOfQueueButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				queueItems = parentWindow.getQueueItems();
-				String firstKeyInQueueItems = (String) queueItems.keySet().toArray()[0];
-				QueueItem firstValueInQueueItems = (QueueItem) queueItems.values().toArray()[0];
-				queueItems = LinkedHashMapEditor.removeItemAtIndex(queueItems, 0);
-				queueItems.put(firstKeyInQueueItems, firstValueInQueueItems);
-				parentWindow.setQueueItems(queueItems);
-				updateQueueList(queueItems);
-				updateItemSelectionComboBox();
+				queueItems = parent.getQueueItems();
+				performItemOperation("move");
+				parent.setQueueItems(queueItems);
 			}
 		});
 		
@@ -181,37 +159,39 @@ public class QueuePanel extends JPanel {
 
 		addItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				contentPaneLayout.show(parentWindow.getContentPane(), "Add Item Panel");
-				parentWindow.setContentPaneLayout(contentPaneLayout);
+				contentPaneLayout.show(parent.getContentPane(), "Add Item Panel");
+				parent.setContentPaneLayout(contentPaneLayout);
 			}
 		});
 		removeSelectedItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				queueItems = parentWindow.getQueueItems();
-				String itemToRemove = (String) parentWindow.getQueuePanel().itemSelectionComboBox.getSelectedItem();
-				queueItems.remove(itemToRemove);
-				parentWindow.setQueueItems(queueItems);
-				updateItemSelectionComboBox();
-				updateQueueList(parentWindow.getQueueItems());
+				queueItems = parent.getQueueItems();
+				performItemOperation("remove");
+				parent.setQueueItems(queueItems);
 			}
 		});
 		editSelectedItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				queueItems = parentWindow.getQueueItems();
-				String selectedItemName = (String) itemSelectionComboBox.getSelectedItem();
-				QueueItem selectedItem = queueItems.get(selectedItemName);
-				EditItemPanel editItemPanel = parentWindow.getEditItemPanel();
+				queueItems = parent.getQueueItems();
+				editItemPanel = parent.getEditItemPanel();
+
+				String firstSelectedItem = queueItemsList.getSelectedValue();
+				int colonIndex = firstSelectedItem.indexOf(':');
+				firstSelectedItem = firstSelectedItem.substring(0, colonIndex);
+				QueueItem selectedValue = queueItems.get(firstSelectedItem);
+
 				try {
-					editItemPanel.setupEditItemPanel(selectedItem);
+					editItemPanel.setupEditItemPanel(selectedValue);
 					String editItemPanelUneditedItem = editItemPanel.getUneditedItem();
-					editItemPanelUneditedItem = selectedItemName;
+					editItemPanelUneditedItem = firstSelectedItem;
 					editItemPanel.setUneditedItem(editItemPanelUneditedItem);
-					parentWindow.setEditItemPanel(editItemPanel);
 					contentPaneLayout.show(contentPane, "Edit Item Panel");
-					parentWindow.setContentPaneLayout(contentPaneLayout);
 				} catch (NullPointerException e) {
 					System.out.println("No item is selected");
 				}
+
+				parent.setEditItemPanel(editItemPanel);
+				parent.setContentPaneLayout(contentPaneLayout);
 			}
 		});
 		saveAndExitButton.addActionListener(new ActionListener() {
@@ -220,33 +200,39 @@ public class QueuePanel extends JPanel {
 			}
 		});
 
-		updateQueueList(queueItems);
+		updateQueueList();
 	}
-	public void updateQueueList(LinkedHashMap<String,QueueItem> queueItems) {
-		queueLabelPanel.removeAll();
-
-		list = new JList<String>();
-		queueLabelPanel.add(list);
+	public void updateQueueList() {
+		queueItemsPanel.removeAll();
+		queueItems = parent.getQueueItems();
+		DefaultListModel<String> queueItemsListModel = new DefaultListModel<String>();
 
 		for (Map.Entry<String,QueueItem> itemEntry : queueItems.entrySet()) {
 			//JEditorPane queueLabel = new JEditorPane("text.rtf.RTFEditorKit", item.name + ":\n" + item.details);
 			String queueLabelText = "";
 			QueueItem item = itemEntry.getValue();
-			JTextPane queueTextPane = new JTextPane();
-
 			queueLabelText += item.name + ":\n" + item.details;
-			queueTextPane.setEditable(false);
-			queueTextPane.setText(queueLabelText);
-			list.add(queueTextPane);
+			queueItemsListModel.addElement(queueLabelText);
 		}
-		queueLabelPanel.validate();
+		queueItemsList = new JList<String>(queueItemsListModel);
+		queueItemsPanel.add(queueItemsList);
+		queueItemsPanel.validate();
 	}
-	public void updateItemSelectionComboBox() {
-		Object[] keys = queueItems.keySet().toArray();
-		Arrays.sort(keys);
-		itemSelectionComboBox.removeAllItems();
-		for (Object key : keys) {
-			itemSelectionComboBox.addItem((String) key);
+	private void performItemOperation(String mode) {
+		//String itemToRemove = (String) parent.getQueuePanel().itemSelectionComboBox.getSelectedItem();
+		List<String> selectedItems = queueItemsList.getSelectedValuesList();
+
+		for (String item : selectedItems) {
+			int colonIndex = item.indexOf(':');
+			item = item.substring(0, colonIndex);
+			QueueItem removedItem = queueItems.remove(item);
+
+			if (mode == "move") {
+				queueItems.put(item, removedItem);
+			} else if (mode == "archive") {
+				archivedItems.put(item, removedItem);
+			} 
 		}
+		updateQueueList();
 	}
 }

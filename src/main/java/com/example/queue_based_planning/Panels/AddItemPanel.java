@@ -1,5 +1,7 @@
 package com.example.queue_based_planning.Panels;
 
+import java.util.LinkedHashMap;
+
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -9,19 +11,17 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedHashMap;
 import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
-import com.example.queue_based_planning.QueueItem;
-import com.example.queue_based_planning.Windows.MainWindow;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
+
+import com.example.queue_based_planning.QueueItem;
+import com.example.queue_based_planning.Windows.MainWindow;
 
 public class AddItemPanel extends JPanel {
 
@@ -37,9 +37,9 @@ public class AddItemPanel extends JPanel {
     private JTextPane nameTextPane;
     private JTextPane detailsTextPane;
 
-    public AddItemPanel(MainWindow parentWindow) {
-		contentPaneLayout = parentWindow.getContentPaneLayout();
-		queueItems = parentWindow.getQueueItems();
+    public AddItemPanel(MainWindow parent) {
+		contentPaneLayout = parent.getContentPaneLayout();
+		queueItems = parent.getQueueItems();
         
         //Set up the panel
         setBounds(100, 100, 960, 540);
@@ -106,14 +106,13 @@ public class AddItemPanel extends JPanel {
 
         addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-                queueItems = parentWindow.getQueueItems();
+                queueItems = parent.getQueueItems();
 				QueueItem newItem = new QueueItem(nameTextPane.getText(), detailsTextPane.getText());
 				queueItems.put(newItem.name, newItem);
-                parentWindow.setQueueItems(queueItems);
-                QueuePanel queuePanel = parentWindow.getQueuePanel();
-                queuePanel.updateItemSelectionComboBox();
-				queuePanel.updateQueueList(queueItems);
-                parentWindow.setQueuePanel(queuePanel);
+                parent.setQueueItems(queueItems);
+                QueuePanel queuePanel = parent.getQueuePanel();
+				queuePanel.updateQueueList();
+                parent.setQueuePanel(queuePanel);
 
 				Component[] infoEntryPanelComponents = infoEntryPanel.getComponents();
 
@@ -136,8 +135,8 @@ public class AddItemPanel extends JPanel {
         
 		backToQueueButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				contentPaneLayout.show(parentWindow.getContentPane(), "Queue Panel");
-                parentWindow.setContentPaneLayout(contentPaneLayout);
+				contentPaneLayout.show(parent.getContentPane(), "Queue Panel");
+                parent.setContentPaneLayout(contentPaneLayout);
 			}
 		});  
     }

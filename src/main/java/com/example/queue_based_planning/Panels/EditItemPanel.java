@@ -1,12 +1,13 @@
 package com.example.queue_based_planning.Panels;
 
+import java.util.LinkedHashMap;
+
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.util.LinkedHashMap;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,16 +17,17 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 
 import com.example.queue_based_planning.LinkedHashMapEditor;
 import com.example.queue_based_planning.QueueItem;
 import com.example.queue_based_planning.Windows.MainWindow;
-import javax.swing.SwingConstants;
 
 public class EditItemPanel extends JPanel {
 
     //From parent window
 	private JPanel contentPane;
+    private QueuePanel queuePanel;
 	private LinkedHashMap<String, QueueItem> queueItems;
 	private CardLayout contentPaneLayout;
     
@@ -41,10 +43,10 @@ public class EditItemPanel extends JPanel {
     public String getUneditedItem() { return uneditedItem; }
     public void setUneditedItem(String value) { uneditedItem = value; }
 
-    public EditItemPanel(MainWindow parentWindow) {
-		contentPane = parentWindow.getContentPane();
-		contentPaneLayout = parentWindow.getContentPaneLayout();
-		queueItems = parentWindow.getQueueItems();
+    public EditItemPanel(MainWindow parent) {
+		contentPane = parent.getContentPane();
+		contentPaneLayout = parent.getContentPaneLayout();
+		queueItems = parent.getQueueItems();
 
         //Set up the panel
         setBounds(100, 100, 960, 540);
@@ -98,19 +100,17 @@ public class EditItemPanel extends JPanel {
         add(editButton, gbc_addButton);
 
         editButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-                queueItems = parentWindow.getQueueItems();
+			public void actionPerformed(ActionEvent e) {
+                queueItems = parent.getQueueItems();
 				QueueItem editedItem = new QueueItem(nameTextPane.getText(), detailsTextPane.getText());
 				queueItems = LinkedHashMapEditor.replaceItem(queueItems, uneditedItem, nameTextPane.getText(), editedItem);
-                parentWindow.setQueueItems(queueItems);
-                QueuePanel queuePanel = parentWindow.getQueuePanel();
-                queuePanel.getItemSelectionComboBox();
-				queuePanel.updateQueueList(queueItems);
-                queuePanel.updateItemSelectionComboBox();
-                parentWindow.setQueuePanel(queuePanel);
+                parent.setQueueItems(queueItems);
+                queuePanel = parent.getQueuePanel();
+				queuePanel.updateQueueList();
+                parent.setQueuePanel(queuePanel);
 
 				contentPaneLayout.show(contentPane, "Queue Panel");
-                parentWindow.setContentPaneLayout(contentPaneLayout);
+                parent.setContentPaneLayout(contentPaneLayout);
 			}
 		});
         
@@ -125,8 +125,8 @@ public class EditItemPanel extends JPanel {
 
         backToQueueButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                contentPaneLayout.show(parentWindow.getContentPane(), "Queue Panel");
-                parentWindow.setContentPaneLayout(contentPaneLayout);
+                contentPaneLayout.show(parent.getContentPane(), "Queue Panel");
+                parent.setContentPaneLayout(contentPaneLayout);
             }
         });
         backToQueuePanel.add(backToQueueButton);

@@ -97,6 +97,7 @@ public class MainWindow extends JFrame {
 		frame.pack();
 		contentPaneLayout = new CardLayout(0, 0);
 		contentPane = new JPanel(contentPaneLayout, rootPaneCheckingEnabled);
+		
 		addItemPanel = new AddItemPanel(this);
 		queuePanel = new QueuePanel(this);
 		editItemPanel = new EditItemPanel(this);
