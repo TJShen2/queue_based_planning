@@ -31,14 +31,19 @@ public class EditItemPanel extends JPanel {
 	private LinkedHashMap<String, QueueItem> queueItems;
 	private CardLayout contentPaneLayout;
     
+    //Window components
+    //Panels
     private JPanel infoEntryPanel;
 
+    //Buttons
     private JButton editButton;
-    private JButton backToQueueButton;
+    private JButton cancelButton;
 
+    //Text panes
     private JTextPane nameTextPane;
     private JTextPane detailsTextPane;
 
+    //Item name before edit
     private String uneditedItem;
     public String getUneditedItem() { return uneditedItem; }
     public void setUneditedItem(String value) { uneditedItem = value; }
@@ -46,27 +51,20 @@ public class EditItemPanel extends JPanel {
     public EditItemPanel(MainWindow parent) {
 		contentPane = parent.getContentPane();
 		contentPaneLayout = parent.getContentPaneLayout();
-		queueItems = parent.getQueueItems();
+		queueItems = parent.getCurrentQueueItems();
 
-        //Set up the panel
+        //Set up the main panel
         setBounds(100, 100, 960, 540);
         setBackground(new Color(255, 246, 187));
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 		
-        //Set up components
+        //Set up layout manager
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 		gbl_contentPane.columnWeights = new double[]{0.0};
         setLayout(gbl_contentPane);
-         
-        JLabel titleLabel = new JLabel("Edit Item");
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        GridBagConstraints gbc_titleLabel = new GridBagConstraints();
-        gbc_titleLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_titleLabel.gridx = 0;
-        gbc_titleLabel.gridy = 1;
-        add(titleLabel, gbc_titleLabel);
         
+        //Set up panels
         infoEntryPanel = new JPanel();
         GridBagConstraints gbc_infoEntryPanel = new GridBagConstraints();
         gbc_infoEntryPanel.weighty = 1.0;
@@ -75,36 +73,45 @@ public class EditItemPanel extends JPanel {
         gbc_infoEntryPanel.fill = GridBagConstraints.BOTH;
         gbc_infoEntryPanel.gridx = 0;
         gbc_infoEntryPanel.gridy = 3;
-        add(infoEntryPanel, gbc_infoEntryPanel);
         infoEntryPanel.setLayout(new GridLayout(2, 2, 0, 25));
+
+        JPanel cancelPanel = new JPanel();
+        GridBagConstraints gbc_cancelPanel = new GridBagConstraints();
+        gbc_cancelPanel.anchor = GridBagConstraints.SOUTHEAST;
+        gbc_cancelPanel.gridx = 0;
+        gbc_cancelPanel.gridy = 7;
         
+        //Set up labels
+        JLabel titleLabel = new JLabel("Edit Item");
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        GridBagConstraints gbc_titleLabel = new GridBagConstraints();
+        gbc_titleLabel.insets = new Insets(0, 0, 5, 5);
+        gbc_titleLabel.gridx = 0;
+        gbc_titleLabel.gridy = 1;
+
         JLabel nameLabel = new JLabel("Name of Item:");
-        infoEntryPanel.add(nameLabel);
-        
+        JLabel detailsLabel = new JLabel("Details:");
+
+        //Set up text panes
         nameTextPane = new JTextPane();
         nameTextPane.setPreferredSize(new Dimension(200, 50));
-        infoEntryPanel.add(nameTextPane);
-      
-        JLabel detailsLabel = new JLabel("Details:");
-        infoEntryPanel.add(detailsLabel);
-        
+
         detailsTextPane = new JTextPane();
         detailsTextPane.setPreferredSize(new Dimension(200, 50));
-        infoEntryPanel.add(detailsTextPane);
-  
+        
+        //Set up buttons
         editButton = new JButton("Edit");
         GridBagConstraints gbc_addButton = new GridBagConstraints();
         gbc_addButton.insets = new Insets(0, 0, 5, 5);
         gbc_addButton.gridx = 0;
         gbc_addButton.gridy = 5;
-        add(editButton, gbc_addButton);
 
         editButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-                queueItems = parent.getQueueItems();
+                queueItems = parent.getCurrentQueueItems();
 				QueueItem editedItem = new QueueItem(nameTextPane.getText(), detailsTextPane.getText());
 				queueItems = LinkedHashMapEditor.replaceItem(queueItems, uneditedItem, nameTextPane.getText(), editedItem);
-                parent.setQueueItems(queueItems);
+                parent.setCurrentQueueItems(queueItems);
                 queuePanel = parent.getQueuePanel();
 				queuePanel.updateQueueList();
                 parent.setQueuePanel(queuePanel);
@@ -113,24 +120,30 @@ public class EditItemPanel extends JPanel {
                 parent.setContentPaneLayout(contentPaneLayout);
 			}
 		});
-        
-        JPanel backToQueuePanel = new JPanel();
-        GridBagConstraints gbc_backToQueuePanel = new GridBagConstraints();
-        gbc_backToQueuePanel.anchor = GridBagConstraints.SOUTHEAST;
-        gbc_backToQueuePanel.gridx = 0;
-        gbc_backToQueuePanel.gridy = 7;
-        add(backToQueuePanel, gbc_backToQueuePanel);
-        
-        backToQueueButton = new JButton("Back to Queue");
 
-        backToQueueButton.addActionListener(new ActionListener() {
+        cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 contentPaneLayout.show(parent.getContentPane(), "Queue Panel");
                 parent.setContentPaneLayout(contentPaneLayout);
             }
         });
-        backToQueuePanel.add(backToQueueButton);
+
+        //Add widgets
+        add(titleLabel, gbc_titleLabel);
+        add(editButton, gbc_addButton);
+
+        cancelPanel.add(cancelButton);
+        infoEntryPanel.add(nameLabel);
+        infoEntryPanel.add(nameTextPane);
+        infoEntryPanel.add(detailsLabel);
+        infoEntryPanel.add(detailsTextPane);
+
+        //Add top-level containers
+        add(cancelPanel, gbc_cancelPanel);
+        add(infoEntryPanel, gbc_infoEntryPanel);
 	}
+
     public void setupEditItemPanel(QueueItem queueItem) {
         nameTextPane.setText(queueItem.name);
         detailsTextPane.setText(queueItem.details);

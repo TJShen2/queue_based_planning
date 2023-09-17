@@ -11,12 +11,13 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.google.gson.reflect.TypeToken;
+
 import com.example.queuebasedplanning.JsonHandler;
 import com.example.queuebasedplanning.QueueItem;
 import com.example.queuebasedplanning.Panels.AddItemPanel;
 import com.example.queuebasedplanning.Panels.EditItemPanel;
 import com.example.queuebasedplanning.Panels.QueuePanel;
-import com.google.gson.reflect.TypeToken;
 
 public class MainWindow extends JFrame {
 
@@ -32,14 +33,16 @@ public class MainWindow extends JFrame {
 	public CardLayout getContentPaneLayout() { return contentPaneLayout; }
 	public void setContentPaneLayout(CardLayout value) { contentPaneLayout = value; }
 	
-	private LinkedHashMap<String, QueueItem> queueItems;
-	public LinkedHashMap<String, QueueItem> getQueueItems() { return queueItems; }
-	public void setQueueItems(LinkedHashMap<String, QueueItem> value) { queueItems = value; }
+	//Queue item hashmaps
+	private LinkedHashMap<String, QueueItem> currentQueueItems;
+	public LinkedHashMap<String, QueueItem> getCurrentQueueItems() { return currentQueueItems; }
+	public void setCurrentQueueItems(LinkedHashMap<String, QueueItem> value) { currentQueueItems = value; }
 
 	private LinkedHashMap<String, QueueItem> archivedItems;
 	public LinkedHashMap<String, QueueItem> getArchivedItems() { return archivedItems; }
 	public void setArchivedItems(LinkedHashMap<String, QueueItem> value) { archivedItems = value; }
 
+	//JSON handling
 	private java.lang.reflect.Type queueItemsType;
 	public java.lang.reflect.Type getQueueItemsType() { return queueItemsType; }
 	public void setQueueItemsType(java.lang.reflect.Type value) { queueItemsType = value; }
@@ -81,9 +84,9 @@ public class MainWindow extends JFrame {
 		queueItemsType = new TypeToken<LinkedHashMap<String,QueueItem>>() {}.getType();
 
 		try {
-			queueItems = (LinkedHashMap<String, QueueItem>) queueItemsJsonHandler.ReadObjectFromJson(queueItemsType);
+			currentQueueItems = (LinkedHashMap<String, QueueItem>) queueItemsJsonHandler.ReadObjectFromJson(queueItemsType);
 		} catch (ClassCastException|NoSuchElementException e) {
-			queueItems = new LinkedHashMap<String, QueueItem>(32, 0.75f);
+			currentQueueItems = new LinkedHashMap<String, QueueItem>(32, 0.75f);
 			System.out.println(e.getMessage());
 		}
 		try {
@@ -109,7 +112,7 @@ public class MainWindow extends JFrame {
 		class WindowClosingEvent extends WindowAdapter {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				performCleanup();
+				saveChanges();
 			}
 		}
 		frame.addWindowListener(new WindowClosingEvent());
@@ -128,8 +131,8 @@ public class MainWindow extends JFrame {
 		frame.setContentPane(contentPane);
 		frame.setVisible(true);
 	}
-	private void performCleanup() {
-		queueItemsJsonHandler.WriteObjectAsJson(queueItems, queueItemsType);
+	public void saveChanges() {
+		queueItemsJsonHandler.WriteObjectAsJson(currentQueueItems, queueItemsType);
 		archivedItemsJsonHandler.WriteObjectAsJson(archivedItems, queueItemsType);
 	}
 }

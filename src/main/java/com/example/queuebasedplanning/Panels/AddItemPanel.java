@@ -27,21 +27,27 @@ public class AddItemPanel extends JPanel {
 
     //From parent window
 	private LinkedHashMap<String, QueueItem> queueItems;
+    private JPanel contentPane;
 	private CardLayout contentPaneLayout;
 
+    //Window components
+    //Panels
     private JPanel infoEntryPanel;
 
+    //Buttons
     private JButton addButton;
-    private JButton backToQueueButton;
+    private JButton cancelButton;
 
+    //Text panes
     private JTextPane nameTextPane;
     private JTextPane detailsTextPane;
 
     public AddItemPanel(MainWindow parent) {
+        contentPane = parent.getContentPane();
 		contentPaneLayout = parent.getContentPaneLayout();
-		queueItems = parent.getQueueItems();
+		queueItems = parent.getCurrentQueueItems();
         
-        //Set up the panel
+        //Set up the main panel
         setBounds(100, 100, 960, 540);
 		setBackground(new Color(255, 246, 187));
 		setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -52,7 +58,7 @@ public class AddItemPanel extends JPanel {
 		gbl_contentPane.columnWeights = new double[]{0.0};
         setLayout(gbl_contentPane);
         
-        //Panels
+        //Set up panels
         infoEntryPanel = new JPanel();
         GridBagConstraints gbc_infoEntryPanel = new GridBagConstraints();
         gbc_infoEntryPanel.weighty = 1.0;
@@ -60,25 +66,22 @@ public class AddItemPanel extends JPanel {
         gbc_infoEntryPanel.fill = GridBagConstraints.BOTH;
         gbc_infoEntryPanel.gridx = 0;
         gbc_infoEntryPanel.gridy = 3;
-        add(infoEntryPanel, gbc_infoEntryPanel);
         infoEntryPanel.setLayout(new GridLayout(2, 2, 0, 25));
 
-        JPanel backToQueuePanel = new JPanel();
-        GridBagConstraints gbc_backToQueuePanel = new GridBagConstraints();
-        gbc_backToQueuePanel.weightx = 1.0;
-        gbc_backToQueuePanel.anchor = GridBagConstraints.SOUTHEAST;
-        gbc_backToQueuePanel.gridx = 0;
-        gbc_backToQueuePanel.gridy = 7;
-        add(backToQueuePanel, gbc_backToQueuePanel);
+        JPanel cancelPanel = new JPanel();
+        GridBagConstraints gbc_cancelPanel = new GridBagConstraints();
+        gbc_cancelPanel.weightx = 1.0;
+        gbc_cancelPanel.anchor = GridBagConstraints.SOUTHEAST;
+        gbc_cancelPanel.gridx = 0;
+        gbc_cancelPanel.gridy = 7;
         
-        //Labels
+        //Set up labels
         JLabel titleLabel = new JLabel("Add New Item");
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         GridBagConstraints gbc_titleLabel = new GridBagConstraints();
         gbc_titleLabel.insets = new Insets(0, 0, 5, 5);
         gbc_titleLabel.gridx = 0;
         gbc_titleLabel.gridy = 1;
-        add(titleLabel, gbc_titleLabel);
 
         JLabel nameLabel = new JLabel("Name of Item:");
         JLabel detailsLabel = new JLabel("Details:");
@@ -90,26 +93,19 @@ public class AddItemPanel extends JPanel {
         detailsTextPane = new JTextPane();
         detailsTextPane.setPreferredSize(new Dimension(200, 50));
         
-        //Add labels and text panes to infoEntryPanel
-        infoEntryPanel.add(nameLabel);
-        infoEntryPanel.add(nameTextPane);
-        infoEntryPanel.add(detailsLabel);
-        infoEntryPanel.add(detailsTextPane);
-        
         //Buttons
         addButton = new JButton("Add");
         GridBagConstraints gbc_addButton = new GridBagConstraints();
         gbc_addButton.insets = new Insets(0, 0, 5, 5);
         gbc_addButton.gridx = 0;
         gbc_addButton.gridy = 5;
-        add(addButton, gbc_addButton);
-
+        
         addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-                queueItems = parent.getQueueItems();
+                queueItems = parent.getCurrentQueueItems();
 				QueueItem newItem = new QueueItem(nameTextPane.getText(), detailsTextPane.getText());
 				queueItems.put(newItem.name, newItem);
-                parent.setQueueItems(queueItems);
+                parent.setCurrentQueueItems(queueItems);
                 QueuePanel queuePanel = parent.getQueuePanel();
 				queuePanel.updateQueueList();
                 parent.setQueuePanel(queuePanel);
@@ -128,16 +124,34 @@ public class AddItemPanel extends JPanel {
                     }
                     i++;
 				}
+                SuccessfullyAddedItemPanel messagePanel = new SuccessfullyAddedItemPanel(newItem.name, parent);
+
+                contentPane.add(messagePanel);
+                contentPaneLayout.addLayoutComponent(messagePanel, "Message Panel");
+                contentPaneLayout.show(contentPane, "Message Panel");
 			}
 		});
-        backToQueueButton = new JButton("Back to Queue");
-        backToQueuePanel.add(backToQueueButton);
-        
-		backToQueueButton.addActionListener(new ActionListener() {
+
+        cancelButton = new JButton("Cancel");
+		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				contentPaneLayout.show(parent.getContentPane(), "Queue Panel");
                 parent.setContentPaneLayout(contentPaneLayout);
 			}
-		});  
+		});
+
+        //Add widgets (buttons, labels, and text panes) to panels
+        add(titleLabel, gbc_titleLabel);
+        add(addButton, gbc_addButton);
+
+        cancelPanel.add(cancelButton);
+        infoEntryPanel.add(nameLabel);
+        infoEntryPanel.add(nameTextPane);
+        infoEntryPanel.add(detailsLabel);
+        infoEntryPanel.add(detailsTextPane);
+
+        //Add top-level containers
+        add(cancelPanel, gbc_cancelPanel);
+        add(infoEntryPanel, gbc_infoEntryPanel);
     }
 }
