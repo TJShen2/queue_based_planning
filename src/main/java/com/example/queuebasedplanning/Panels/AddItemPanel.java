@@ -106,8 +106,10 @@ public class AddItemPanel extends JPanel {
 				QueueItem newItem = new QueueItem(nameTextPane.getText(), detailsTextPane.getText());
 				queueItems.put(newItem.name, newItem);
                 parent.setCurrentQueueItems(queueItems);
+
                 QueuePanel queuePanel = parent.getQueuePanel();
 				queuePanel.updateQueueList();
+                queuePanel.updateButtonStates();
                 parent.setQueuePanel(queuePanel);
 
 				Component[] infoEntryPanelComponents = infoEntryPanel.getComponents();

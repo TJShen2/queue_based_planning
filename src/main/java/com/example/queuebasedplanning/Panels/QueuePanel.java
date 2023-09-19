@@ -18,12 +18,15 @@ import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.JButton;
 //import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
 
@@ -34,6 +37,9 @@ import javax.swing.JCheckBox;
 public class QueuePanel extends JPanel {
 
 	private Boolean archiveMode; //Whether the displayed items are the archived items
+	public Boolean getArchiveMode() { return archiveMode; }
+	public void setArchivedMode(Boolean value) { archiveMode = value; }
+
 	private LinkedHashMap<String, QueueItem> displayedItems; //The items (current or archive) that are currently being displayed
 
 	//Swing/AWT components
@@ -65,6 +71,7 @@ public class QueuePanel extends JPanel {
 
 	//Lists
 	private JList<String> queueItemsList;
+	private ListSelectionModel queueItemsListSelectionModel;
 
 	//Check boxes
 	private JCheckBox archiveModeCheckBox;
@@ -148,13 +155,15 @@ public class QueuePanel extends JPanel {
 			}
 		});
 		
-		archiveSelectedItemButton = new JButton("Archive Selected Item");
+		archiveSelectedItemButton = new JButton();
 		archiveSelectedItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		archiveSelectedItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0)  {
 				currentQueueItems = parent.getCurrentQueueItems();
 				performItemOperation("archive");
 				parent.setCurrentQueueItems(currentQueueItems);
+
+				updateButtonStates();
 			}
 		});
 		
@@ -165,6 +174,8 @@ public class QueuePanel extends JPanel {
 				currentQueueItems = parent.getCurrentQueueItems();
 				performItemOperation("move");
 				parent.setCurrentQueueItems(currentQueueItems);
+
+				updateButtonStates();
 			}
 		});
 		
@@ -172,14 +183,22 @@ public class QueuePanel extends JPanel {
 		editSelectedItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		editSelectedItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				currentQueueItems = parent.getCurrentQueueItems();
-				editItemPanel = parent.getEditItemPanel();
 				String firstSelectedItem = queueItemsList.getSelectedValue();
 				int colonIndex = firstSelectedItem.indexOf(':');
 				firstSelectedItem = firstSelectedItem.substring(0, colonIndex);
-				QueueItem selectedValue = currentQueueItems.get(firstSelectedItem);
+
+				QueueItem selectedValue;
+
+				if (archiveMode) {
+					archivedItems = parent.getArchivedItems();
+					selectedValue = archivedItems.get(firstSelectedItem);
+				} else {
+					currentQueueItems = parent.getCurrentQueueItems();
+					selectedValue = currentQueueItems.get(firstSelectedItem);
+				}
 
 				try {
+					editItemPanel = parent.getEditItemPanel();
 					editItemPanel.setupEditItemPanel(selectedValue);
 					String editItemPanelUneditedItem = editItemPanel.getUneditedItem();
 					editItemPanelUneditedItem = firstSelectedItem;
@@ -201,6 +220,8 @@ public class QueuePanel extends JPanel {
 				currentQueueItems = parent.getCurrentQueueItems();
 				performItemOperation("remove");
 				parent.setCurrentQueueItems(currentQueueItems);
+
+				updateButtonStates();
 			}
 		});
 			
@@ -225,6 +246,7 @@ public class QueuePanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				archiveMode = archiveModeCheckBox.isSelected();
 				updateQueueList();
+				updateButtonStates();
 			}
 		});
 
@@ -246,6 +268,7 @@ public class QueuePanel extends JPanel {
 		add(savePanel, gbc_saveAndExitPanel);
 
 		updateQueueList();
+		updateButtonStates();
 	}
 	public void updateQueueList() {
 		queueItemsPanel.removeAll();
@@ -269,6 +292,13 @@ public class QueuePanel extends JPanel {
 			queueItemsListModel.addElement(queueLabelText);
 		}
 		queueItemsList = new JList<String>(queueItemsListModel);
+		queueItemsListSelectionModel = queueItemsList.getSelectionModel();
+		queueItemsListSelectionModel.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				updateButtonStates();
+			}
+		});
+
 		queueItemsPanel.add(queueItemsList);
 		queueItemsPanel.validate();
 	}
@@ -279,16 +309,55 @@ public class QueuePanel extends JPanel {
 		for (String item : selectedItems) {
 			int colonIndex = item.indexOf(':');
 			item = item.substring(0, colonIndex);
-			QueueItem removedItem = currentQueueItems.remove(item);
 
-			if (mode == "move") {
-				currentQueueItems.put(item, removedItem);
-			} else if (mode == "archive") {
-				archivedItems.put(item, removedItem);
-			} else if (mode == "remove") {
-				assert true;
+			//If mode is "move", add the removed item back to the bottom of the queue
+			//If mode is "archive", add the removed item to the archivedItems hashmap
+			//If mode is "remove", do not add the item back to any hashmaps
+			
+			if (archiveMode) {
+				QueueItem removedItem = archivedItems.remove(item);
+				if (mode == "move") {
+					archivedItems.put(item, removedItem);
+				} else if (mode == "archive") {
+					currentQueueItems.put(item, removedItem);
+				}
+			} else {
+				QueueItem removedItem = currentQueueItems.remove(item);
+				if (mode == "move") {
+					currentQueueItems.put(item, removedItem);
+				} else if (mode == "archive") {
+					archivedItems.put(item, removedItem);
+				}
 			}
 		}
 		updateQueueList();
+	}
+	public void updateButtonStates() {
+		int itemsSelectedCount = queueItemsList.getSelectedValuesList().size();
+
+		if (itemsSelectedCount == 1) {
+			archiveSelectedItemButton.setEnabled(true);
+			moveSelectedItemToBackOfQueueButton.setEnabled(true);
+			removeSelectedItemButton.setEnabled(true);
+			editSelectedItemButton.setEnabled(true);
+		} else if (itemsSelectedCount > 1) {
+			archiveSelectedItemButton.setEnabled(true);
+			moveSelectedItemToBackOfQueueButton.setEnabled(true);
+			removeSelectedItemButton.setEnabled(true);
+			editSelectedItemButton.setEnabled(false);
+		} else {
+			archiveSelectedItemButton.setEnabled(false);
+			moveSelectedItemToBackOfQueueButton.setEnabled(false);
+			removeSelectedItemButton.setEnabled(false);
+			editSelectedItemButton.setEnabled(false);
+		}
+
+		if (archiveMode) {
+			archiveSelectedItemButton.setText("Restore Selected Item");
+			addItemButton.setEnabled(false);
+		} else {
+			archiveSelectedItemButton.setText("Archive Selected Item");
+			addItemButton.setEnabled(true);
+		}
 	}
 }

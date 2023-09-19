@@ -30,6 +30,7 @@ public class EditItemPanel extends JPanel {
     private QueuePanel queuePanel;
 	private LinkedHashMap<String, QueueItem> queueItems;
 	private CardLayout contentPaneLayout;
+    private Boolean archiveMode;
     
     //Window components
     //Panels
@@ -108,12 +109,24 @@ public class EditItemPanel extends JPanel {
 
         editButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-                queueItems = parent.getCurrentQueueItems();
-				QueueItem editedItem = new QueueItem(nameTextPane.getText(), detailsTextPane.getText());
-				queueItems = LinkedHashMapEditor.replaceItem(queueItems, uneditedItem, nameTextPane.getText(), editedItem);
-                parent.setCurrentQueueItems(queueItems);
                 queuePanel = parent.getQueuePanel();
+                archiveMode = queuePanel.getArchiveMode();
+
+                QueueItem editedItem = new QueueItem(nameTextPane.getText(), detailsTextPane.getText());
+
+                if (archiveMode) {
+                    queueItems = parent.getArchivedItems();
+                    //output parameter doesn't work
+				    LinkedHashMapEditor.replaceItem(queueItems, uneditedItem, nameTextPane.getText(), editedItem);
+                    parent.setArchivedItems(queueItems);
+                } else {
+                    queueItems = parent.getCurrentQueueItems();
+                    LinkedHashMapEditor.replaceItem(queueItems, uneditedItem, nameTextPane.getText(), editedItem);
+                    parent.setCurrentQueueItems(queueItems);
+                }
+
 				queuePanel.updateQueueList();
+                queuePanel.updateButtonStates();
                 parent.setQueuePanel(queuePanel);
 
 				contentPaneLayout.show(contentPane, "Queue Panel");
