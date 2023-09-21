@@ -5,11 +5,14 @@ import java.util.NoSuchElementException;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 import com.google.gson.reflect.TypeToken;
 
@@ -96,6 +99,13 @@ public class MainWindow extends JFrame {
 			System.out.println(e.getMessage());
 		}
 		
+		int saveChangesInterval = Math.round(Math.max(0.1f * (currentQueueItems.size() + archivedItems.size()), 15f));
+		Timer saveChangesTimer = new Timer(saveChangesInterval, new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				saveChanges();
+			}
+		});
+		
 		frame = new JFrame();
 		frame.pack();
 		contentPaneLayout = new CardLayout(0, 0);
@@ -129,6 +139,8 @@ public class MainWindow extends JFrame {
 		contentPaneLayout.show(contentPane, "Queue Panel");
 
 		frame.setContentPane(contentPane);
+		saveChangesTimer.start();
+
 		frame.setVisible(true);
 	}
 	public void saveChanges() {

@@ -184,7 +184,7 @@ public class QueuePanel extends JPanel {
 		editSelectedItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String firstSelectedItem = queueItemsList.getSelectedValue();
-				int colonIndex = firstSelectedItem.indexOf(':');
+				int colonIndex = firstSelectedItem.indexOf(":\n");
 				firstSelectedItem = firstSelectedItem.substring(0, colonIndex);
 
 				QueueItem selectedValue;
@@ -307,7 +307,7 @@ public class QueuePanel extends JPanel {
 		List<String> selectedItems = queueItemsList.getSelectedValuesList();
 
 		for (String item : selectedItems) {
-			int colonIndex = item.indexOf(':');
+			int colonIndex = item.indexOf(":\n");
 			item = item.substring(0, colonIndex);
 
 			//If mode is "move", add the removed item back to the bottom of the queue
@@ -333,6 +333,7 @@ public class QueuePanel extends JPanel {
 		updateQueueList();
 	}
 	public void updateButtonStates() {
+		//Modify which buttons are enabled based on the number of items selected and whether archive mode is activated
 		int itemsSelectedCount = queueItemsList.getSelectedValuesList().size();
 
 		if (itemsSelectedCount == 1) {
