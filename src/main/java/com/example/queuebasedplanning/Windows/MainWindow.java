@@ -1,7 +1,7 @@
 package com.example.queuebasedplanning.Windows;
 
-import java.util.LinkedHashMap;
-import java.util.NoSuchElementException;
+import java.util.ArrayList;
+import java.util.List;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -37,13 +37,13 @@ public class MainWindow extends JFrame {
 	public void setContentPaneLayout(CardLayout value) { contentPaneLayout = value; }
 	
 	//Queue item hashmaps
-	private LinkedHashMap<String, QueueItem> currentQueueItems;
-	public LinkedHashMap<String, QueueItem> getCurrentQueueItems() { return currentQueueItems; }
-	public void setCurrentQueueItems(LinkedHashMap<String, QueueItem> value) { currentQueueItems = value; }
+	private List<QueueItem> currentQueueItems;
+	public List<QueueItem> getCurrentQueueItems() { return currentQueueItems; }
+	public void setCurrentQueueItems(List<QueueItem> value) { currentQueueItems = value; }
 
-	private LinkedHashMap<String, QueueItem> archivedItems;
-	public LinkedHashMap<String, QueueItem> getArchivedItems() { return archivedItems; }
-	public void setArchivedItems(LinkedHashMap<String, QueueItem> value) { archivedItems = value; }
+	private List<QueueItem> archivedItems;
+	public List<QueueItem> getArchivedItems() { return archivedItems; }
+	public void setArchivedItems(List<QueueItem> value) { archivedItems = value; }
 
 	//JSON handling
 	private java.lang.reflect.Type queueItemsType;
@@ -84,19 +84,19 @@ public class MainWindow extends JFrame {
 	private void initialize() {
 		queueItemsJsonHandler = new JsonHandler("queueItems.json");
 		archivedItemsJsonHandler = new JsonHandler("archivedItems.json");
-		queueItemsType = new TypeToken<LinkedHashMap<String,QueueItem>>() {}.getType();
+		queueItemsType = new TypeToken<List<QueueItem>>() {}.getType();
 
 		try {
-			currentQueueItems = (LinkedHashMap<String, QueueItem>) queueItemsJsonHandler.ReadObjectFromJson(queueItemsType);
-		} catch (ClassCastException|NoSuchElementException e) {
-			currentQueueItems = new LinkedHashMap<String, QueueItem>(32, 0.75f);
-			System.out.println(e.getMessage());
+			currentQueueItems = queueItemsJsonHandler.ReadObjectFromJson();
+		} catch (Exception e) {
+			currentQueueItems = new ArrayList<QueueItem>();
+			e.printStackTrace();
 		}
 		try {
-			archivedItems = (LinkedHashMap<String, QueueItem>) archivedItemsJsonHandler.ReadObjectFromJson(queueItemsType);
-		} catch (ClassCastException|NoSuchElementException e) {
-			archivedItems = new LinkedHashMap<String, QueueItem>(32, 0.75f);
-			System.out.println(e.getMessage());
+			archivedItems = archivedItemsJsonHandler.ReadObjectFromJson();
+		} catch (Exception e) {
+			archivedItems = new ArrayList<QueueItem>();
+			e.printStackTrace();
 		}
 		
 		int saveChangesInterval = Math.round(Math.max(0.1f * (currentQueueItems.size() + archivedItems.size()), 15f));
@@ -116,7 +116,7 @@ public class MainWindow extends JFrame {
 		editItemPanel = new EditItemPanel(this);
 
 		frame.setBounds(100, 100, 960, 540);
-		frame.setMinimumSize(new Dimension(480, 270));
+		frame.setMinimumSize(new Dimension(480, 360));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		class WindowClosingEvent extends WindowAdapter {

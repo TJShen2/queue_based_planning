@@ -1,6 +1,8 @@
 package com.example.queuebasedplanning.Panels;
 
-import java.util.LinkedHashMap;
+import java.util.List;
+
+import java.time.ZonedDateTime;
 
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -26,7 +28,7 @@ import com.example.queuebasedplanning.Windows.MainWindow;
 public class AddItemPanel extends JPanel {
 
     //From parent window
-	private LinkedHashMap<String, QueueItem> queueItems;
+	private List<QueueItem> queueItems;
     private JPanel contentPane;
 	private CardLayout contentPaneLayout;
 
@@ -103,13 +105,14 @@ public class AddItemPanel extends JPanel {
         addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
                 queueItems = parent.getCurrentQueueItems();
-				QueueItem newItem = new QueueItem(nameTextPane.getText(), detailsTextPane.getText());
-				queueItems.put(newItem.name, newItem);
+				QueueItem newItem = new QueueItem(nameTextPane.getText(), detailsTextPane.getText(), ZonedDateTime.now());
+				queueItems.add(newItem);
                 parent.setCurrentQueueItems(queueItems);
 
                 QueuePanel queuePanel = parent.getQueuePanel();
 				queuePanel.updateQueueList();
                 queuePanel.updateButtonStates();
+                parent.saveChanges();
                 parent.setQueuePanel(queuePanel);
 
 				Component[] infoEntryPanelComponents = infoEntryPanel.getComponents();
@@ -126,7 +129,7 @@ public class AddItemPanel extends JPanel {
                     }
                     i++;
 				}
-                SuccessfullyAddedItemPanel messagePanel = new SuccessfullyAddedItemPanel(newItem.name, parent);
+                SuccessfullyAddedItemPanel messagePanel = new SuccessfullyAddedItemPanel(newItem.getName(), parent);
 
                 contentPane.add(messagePanel);
                 contentPaneLayout.addLayoutComponent(messagePanel, "Message Panel");

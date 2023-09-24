@@ -5,6 +5,9 @@ archivedItems.json
 #Bytecode
 *.class
 
+#VS Code settings
+.vscode/settings.json
+
 #Other unnecessary files
 .DS_Store
 

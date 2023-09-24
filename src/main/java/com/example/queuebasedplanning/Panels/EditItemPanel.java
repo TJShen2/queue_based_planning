@@ -1,7 +1,6 @@
 package com.example.queuebasedplanning.Panels;
 
-import java.util.LinkedHashMap;
-
+import java.util.List;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,15 +10,17 @@ import java.awt.Insets;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.ZonedDateTime;
 
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 
-import com.example.queuebasedplanning.LinkedHashMapEditor;
 import com.example.queuebasedplanning.QueueItem;
 import com.example.queuebasedplanning.Windows.MainWindow;
 
@@ -28,7 +29,7 @@ public class EditItemPanel extends JPanel {
     //From parent window
 	private JPanel contentPane;
     private QueuePanel queuePanel;
-	private LinkedHashMap<String, QueueItem> queueItems;
+	private List<QueueItem> queueItems;
 	private CardLayout contentPaneLayout;
     private Boolean archiveMode;
     
@@ -44,10 +45,14 @@ public class EditItemPanel extends JPanel {
     private JTextPane nameTextPane;
     private JTextPane detailsTextPane;
 
-    //Item name before edit
-    private String uneditedItem;
-    public String getUneditedItem() { return uneditedItem; }
-    public void setUneditedItem(String value) { uneditedItem = value; }
+    //Labels
+    private JLabel lastEditedLabel;
+    private JLabel dateTimeLabel;
+
+    //Item number before edit
+    private int itemLocation;
+
+    private ZonedDateTime lastEditedDateTime;
 
     public EditItemPanel(MainWindow parent) {
 		contentPane = parent.getContentPane();
@@ -74,7 +79,7 @@ public class EditItemPanel extends JPanel {
         gbc_infoEntryPanel.fill = GridBagConstraints.BOTH;
         gbc_infoEntryPanel.gridx = 0;
         gbc_infoEntryPanel.gridy = 3;
-        infoEntryPanel.setLayout(new GridLayout(2, 2, 0, 25));
+        infoEntryPanel.setLayout(new GridLayout(3, 2, 0, 25));
 
         JPanel cancelPanel = new JPanel();
         GridBagConstraints gbc_cancelPanel = new GridBagConstraints();
@@ -82,7 +87,7 @@ public class EditItemPanel extends JPanel {
         gbc_cancelPanel.gridx = 0;
         gbc_cancelPanel.gridy = 7;
         
-        //Set up labels
+        //Set up buttons and text panes in the infoEntryPanel
         JLabel titleLabel = new JLabel("Edit Item");
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         GridBagConstraints gbc_titleLabel = new GridBagConstraints();
@@ -91,14 +96,43 @@ public class EditItemPanel extends JPanel {
         gbc_titleLabel.gridy = 1;
 
         JLabel nameLabel = new JLabel("Name of Item:");
+        nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         JLabel detailsLabel = new JLabel("Details:");
+        detailsLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        //Set up text panes
         nameTextPane = new JTextPane();
         nameTextPane.setPreferredSize(new Dimension(200, 50));
+        nameTextPane.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) {
+                updateDateTime();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                updateDateTime();
+            }
+            public void changedUpdate(DocumentEvent e) {
+                updateDateTime();
+            }
+        });
 
         detailsTextPane = new JTextPane();
         detailsTextPane.setPreferredSize(new Dimension(200, 50));
+        detailsTextPane.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) {
+                updateDateTime();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                updateDateTime();
+            }
+            public void changedUpdate(DocumentEvent e) {
+                updateDateTime();
+            }
+        });
+
+        lastEditedLabel = new JLabel("Last Edited:");
+        lastEditedLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        dateTimeLabel = new JLabel("New label");
+        dateTimeLabel.setHorizontalAlignment(SwingConstants.CENTER);
         
         //Set up buttons
         editButton = new JButton("Edit");
@@ -112,18 +146,21 @@ public class EditItemPanel extends JPanel {
                 queuePanel = parent.getQueuePanel();
                 archiveMode = queuePanel.getArchiveMode();
 
-                QueueItem editedItem = new QueueItem(nameTextPane.getText(), detailsTextPane.getText());
+                QueueItem editedItem = new QueueItem(nameTextPane.getText(), detailsTextPane.getText(), lastEditedDateTime);
 
                 if (archiveMode) {
                     queueItems = parent.getArchivedItems();
-                    //output parameter doesn't work
-				    LinkedHashMapEditor.replaceItem(queueItems, uneditedItem, nameTextPane.getText(), editedItem);
+                    queueItems.remove(itemLocation);
+                    queueItems.add(itemLocation, editedItem);
                     parent.setArchivedItems(queueItems);
                 } else {
                     queueItems = parent.getCurrentQueueItems();
-                    LinkedHashMapEditor.replaceItem(queueItems, uneditedItem, nameTextPane.getText(), editedItem);
+                    queueItems.remove(itemLocation);
+                    queueItems.add(itemLocation, editedItem);
                     parent.setCurrentQueueItems(queueItems);
                 }
+
+                parent.saveChanges();
 
 				queuePanel.updateQueueList();
                 queuePanel.updateButtonStates();
@@ -151,14 +188,25 @@ public class EditItemPanel extends JPanel {
         infoEntryPanel.add(nameTextPane);
         infoEntryPanel.add(detailsLabel);
         infoEntryPanel.add(detailsTextPane);
+        infoEntryPanel.add(lastEditedLabel);
+        infoEntryPanel.add(dateTimeLabel);
 
         //Add top-level containers
         add(cancelPanel, gbc_cancelPanel);
         add(infoEntryPanel, gbc_infoEntryPanel);
 	}
 
-    public void setupEditItemPanel(QueueItem queueItem) {
-        nameTextPane.setText(queueItem.name);
-        detailsTextPane.setText(queueItem.details);
+    public void setupEditItemPanel(int index, QueueItem queueItem) {
+        itemLocation = index;
+
+        nameTextPane.setText(queueItem.getName());
+        detailsTextPane.setText(queueItem.getDetails());
+        lastEditedDateTime = queueItem.getLastChanged();
+        dateTimeLabel.setText(lastEditedDateTime.toString());
+    }
+
+    private void updateDateTime() {
+        lastEditedDateTime = ZonedDateTime.now();
+        dateTimeLabel.setText(lastEditedDateTime.toString());
     }
 }

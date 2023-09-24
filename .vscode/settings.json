@@ -1,9 +1,0 @@
-{
-    "java.configuration.updateBuildConfiguration": "interactive",
-    "git.ignoreLimitWarning": true,
-    "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m -Xlog:disable",
-    "java.dependency.packagePresentation": "flat",
-    "editor.semanticHighlighting.enabled": true,
-    "csharp.semanticHighlighting.enabled": false,
-    "java.debug.settings.onBuildFailureProceed": true
-}
