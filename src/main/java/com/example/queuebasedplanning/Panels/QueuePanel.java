@@ -266,19 +266,19 @@ public class QueuePanel extends JPanel {
 			}
 		});
 		
-		
-		
 		detailsLabel = new JLabel("Details:");
 		detailsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		detailsLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		detailsTextPane = new JTextPane();
+		detailsTextPane.setEditable(false);
 		
 		lastEditedLabel = new JLabel("Last Edited:");
 		lastEditedLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lastEditedLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
 		lastEditedTextPane = new JTextPane();
+		detailsTextPane.setEditable(false);
 
 		//Add buttons to panels
 		titleLabelPanel.add(titleLabel);
