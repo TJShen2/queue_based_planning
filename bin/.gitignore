@@ -2,14 +2,6 @@
 queueItems.json
 archivedItems.json
 
-#Photos added by user
-*.jpeg
-*.png
-*.jpg
-*.webp
-src/main/java/images
-target/classes/images
-
 #Bytecode
 *.class
 
@@ -18,3 +10,4 @@ target/classes/images
 
 #Other unnecessary files
 .DS_Store
+

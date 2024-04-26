@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.HashMap;
 
 import java.lang.reflect.Type;
 import java.time.ZonedDateTime;
@@ -45,9 +46,26 @@ public class JsonHandler {
             e.printStackTrace();
         }
     }
-    public List<QueueItem> ReadObjectFromJson() {
+    public List<QueueItem> ReadListFromJson() {
         Type type = new TypeToken<List<QueueItem>>() {}.getType();
         List<QueueItem> deserializedObject = new ArrayList<QueueItem>();
+        
+        try {
+            jsonReader = new Scanner(selectedFile);
+
+            String jsonRepresentation = new String();
+            while (jsonReader.hasNext()) {
+                jsonRepresentation += jsonReader.nextLine();
+            }
+            deserializedObject = jsonHandler.fromJson(jsonRepresentation, type);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return deserializedObject;
+    }
+    public HashMap<String,String> ReadHashMapFromJson() {
+        Type type = new TypeToken<HashMap<String,String>>() {}.getType();
+        HashMap<String,String> deserializedObject = new HashMap<String,String>();
         
         try {
             jsonReader = new Scanner(selectedFile);

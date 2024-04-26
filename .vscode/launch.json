@@ -8,6 +8,13 @@
             "type": "java",
             "name": "App",
             "request": "launch",
+            "mainClass": "src.main.java.com.example.queuebasedplanning.App",
+            "projectName": "queue_based_planning"
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
             "mainClass": "com.example.queuebasedplanning.App",
             "projectName": "queue_based_planning"
         },

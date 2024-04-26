@@ -1,8 +1,5 @@
 package com.example.queuebasedplanning.Panels;
 
-import java.io.File;
-import java.io.IOException;
-
 import java.util.List;
 
 import java.time.ZonedDateTime;
@@ -17,29 +14,27 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.GridLayout;
-import java.awt.image.BufferedImage;
-import java.awt.Image;
-
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 
 import com.example.queuebasedplanning.QueueItem;
 import com.example.queuebasedplanning.Windows.MainWindow;
-
-import javax.imageio.ImageIO;
+import com.example.queuebasedplanning.Windows.PictureWindow;
 
 public class AddItemPanel extends JPanel {
 
     //From parent window
+    private MainWindow parent;
 	private List<QueueItem> queueItems;
     private JPanel contentPane;
 	private CardLayout contentPaneLayout;
+
+    //Application settings
+    private Boolean displayPicture;
 
     //Window components
     //Panels
@@ -54,6 +49,7 @@ public class AddItemPanel extends JPanel {
     private JTextPane detailsTextPane;
 
     public AddItemPanel(MainWindow parent) {
+        this.parent = parent;
         contentPane = parent.getContentPane();
 		contentPaneLayout = parent.getContentPaneLayout();
 		queueItems = parent.getCurrentQueueItems();
@@ -138,19 +134,12 @@ public class AddItemPanel extends JPanel {
                     }
                     i++;
 				}
-                BufferedImage bufferedImage = null;
-                try {
-                    bufferedImage = ImageIO.read(new File("./src/main/java/images/5.jpeg"));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                getUpdatedSettings();
+
+                if (displayPicture) {
+                    PictureWindow pictureWindow = new PictureWindow();
+                    pictureWindow.setVisible(true);
                 }
-                Image image = bufferedImage.getScaledInstance(654, 980, Image.SCALE_DEFAULT);
-                ImageIcon imageIcon = new ImageIcon(image, "wow");
-                
-                JOptionPane successPanel = new JOptionPane("Sucessfully added the item!", JOptionPane.INFORMATION_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION, imageIcon);
-                successPanel.setMaximumSize(new Dimension(1920, 1080));
-                JOptionPane.showInputDialog(successPanel);
-                
                 SuccessfullyAddedItemPanel messagePanel = new SuccessfullyAddedItemPanel(newItem.getName(), parent);
 
                 contentPane.add(messagePanel);
@@ -180,5 +169,9 @@ public class AddItemPanel extends JPanel {
         //Add top-level containers
         add(cancelPanel, gbc_cancelPanel);
         add(infoEntryPanel, gbc_infoEntryPanel);
+    }
+    public void getUpdatedSettings() {
+        parent.loadSettings();
+        displayPicture = parent.getDisplayPicture();
     }
 }

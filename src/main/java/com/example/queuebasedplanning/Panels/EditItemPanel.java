@@ -27,10 +27,13 @@ import com.example.queuebasedplanning.Windows.MainWindow;
 public class EditItemPanel extends JPanel {
 
     //From parent window
+    private MainWindow parent;
 	private JPanel contentPane;
     private QueuePanel queuePanel;
 	private List<QueueItem> queueItems;
 	private CardLayout contentPaneLayout;
+
+    //Application settings
     private Boolean archiveMode;
     
     //Window components
@@ -55,6 +58,7 @@ public class EditItemPanel extends JPanel {
     private ZonedDateTime lastEditedDateTime;
 
     public EditItemPanel(MainWindow parent) {
+        this.parent = parent;
 		contentPane = parent.getContentPane();
 		contentPaneLayout = parent.getContentPaneLayout();
 		queueItems = parent.getCurrentQueueItems();
@@ -143,8 +147,8 @@ public class EditItemPanel extends JPanel {
 
         editButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+                getUpdatedSettings();
                 queuePanel = parent.getQueuePanel();
-                archiveMode = queuePanel.getArchiveMode();
 
                 QueueItem editedItem = new QueueItem(nameTextPane.getText(), detailsTextPane.getText(), lastEditedDateTime);
 
@@ -208,5 +212,9 @@ public class EditItemPanel extends JPanel {
     private void updateDateTime() {
         lastEditedDateTime = ZonedDateTime.now();
         dateTimeLabel.setText(lastEditedDateTime.toString());
+    }
+    private void getUpdatedSettings() {
+        parent.loadSettings();
+        archiveMode = parent.getArchiveMode();
     }
 }
