@@ -1,17 +1,20 @@
 #JSON files for storing user data
 queueItems.json
 archivedItems.json
+settings.json
+data
 
 #Photos added by user
 *.jpeg
 *.png
 *.jpg
 *.webp
-src/main/java/images
-target/classes/images
+images
+target
 
 #Bytecode
 *.class
+*.jar
 
 #VS Code settings
 .vscode/settings.json
