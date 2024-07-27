@@ -1,7 +1,6 @@
 package com.tj.queuebasedplanning.windows;
 
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -33,29 +32,12 @@ public class PictureWindow extends JFrame {
 	private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					PictureWindow frame = new PictureWindow();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
 	 * Create the frame.
 	 */
 	public PictureWindow() {
 		this.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
 				throw new UnsupportedOperationException("Unimplemented method 'keyTyped'");
 			}
 			@Override
@@ -68,7 +50,6 @@ public class PictureWindow extends JFrame {
 			}
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
 				throw new UnsupportedOperationException("Unimplemented method 'keyReleased'");
 			}
 		});

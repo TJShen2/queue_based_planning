@@ -22,7 +22,7 @@ import javax.swing.Timer;
 
 import com.google.gson.reflect.TypeToken;
 
-import com.tj.queuebasedplanning.JsonHandler;
+import com.tj.queuebasedplanning.Json;
 import com.tj.queuebasedplanning.QueueItem;
 import com.tj.queuebasedplanning.panels.AddItemPanel;
 import com.tj.queuebasedplanning.panels.EditItemPanel;
@@ -57,15 +57,15 @@ public class MainWindow extends JFrame {
 	public java.lang.reflect.Type getQueueItemsType() { return queueItemsType; }
 	public void setQueueItemsType(java.lang.reflect.Type value) { queueItemsType = value; }
 
-	private JsonHandler queueItemsJsonHandler;
-	public JsonHandler getQueueItemsJsonHandler() { return queueItemsJsonHandler; }
-	public void setQueueItemsJsonHandler(JsonHandler value) { queueItemsJsonHandler = value; }
+	private Json queueItemsJsonHandler;
+	public Json getQueueItemsJsonHandler() { return queueItemsJsonHandler; }
+	public void setQueueItemsJsonHandler(Json value) { queueItemsJsonHandler = value; }
 
-	private JsonHandler archivedItemsJsonHandler;
-	public JsonHandler getArchivedItemsJsonHandler() { return archivedItemsJsonHandler; }
-	public void setArchivedItemsJsonHandler(JsonHandler value) { archivedItemsJsonHandler = value; }
+	private Json archivedItemsJsonHandler;
+	public Json getArchivedItemsJsonHandler() { return archivedItemsJsonHandler; }
+	public void setArchivedItemsJsonHandler(Json value) { archivedItemsJsonHandler = value; }
 
-	private JsonHandler settingsJsonHandler;
+	private Json settingsJsonHandler;
 	private java.lang.reflect.Type settingsType;
 
 	//panels
@@ -125,27 +125,27 @@ public class MainWindow extends JFrame {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		queueItemsJsonHandler = new JsonHandler("data/queueItems.json");
-		archivedItemsJsonHandler = new JsonHandler("data/archivedItems.json");
+		queueItemsJsonHandler = new Json("data/queueItems.json");
+		archivedItemsJsonHandler = new Json("data/archivedItems.json");
 		queueItemsType = new TypeToken<List<QueueItem>>() {}.getType();
 
-		settingsJsonHandler = new JsonHandler("data/settings.json");
+		settingsJsonHandler = new Json("data/settings.json");
 		settingsType = new TypeToken<HashMap<String,String>>() {}.getType();
 
 		try {
-			currentQueueItems = queueItemsJsonHandler.ReadListFromJson();
+			currentQueueItems = queueItemsJsonHandler.readObjectFromJson(queueItemsType);
 		} catch (Exception e) {
 			currentQueueItems = new ArrayList<QueueItem>();
 			e.printStackTrace();
 		}
 		try {
-			archivedItems = archivedItemsJsonHandler.ReadListFromJson();
+			archivedItems = archivedItemsJsonHandler.readObjectFromJson(queueItemsType);
 		} catch (Exception e) {
 			archivedItems = new ArrayList<QueueItem>();
 			e.printStackTrace();
 		}
 		try {
-			settings = settingsJsonHandler.ReadHashMapFromJson();
+			settings = settingsJsonHandler.readObjectFromJson(settingsType);
 		} catch (Exception e) {
 			settings = new HashMap<String,String>();
 		}
@@ -199,11 +199,11 @@ public class MainWindow extends JFrame {
 		frame.setVisible(true);
 	}
 	public void saveChanges() {
-		queueItemsJsonHandler.WriteObjectAsJson(currentQueueItems, queueItemsType);
-		archivedItemsJsonHandler.WriteObjectAsJson(archivedItems, queueItemsType);
+		queueItemsJsonHandler.writeObjectToJson(currentQueueItems, queueItemsType);
+		archivedItemsJsonHandler.writeObjectToJson(archivedItems, queueItemsType);
 	}
 	public void saveSettings() {
-		settingsJsonHandler.WriteObjectAsJson(settings, settingsType);
+		settingsJsonHandler.writeObjectToJson(settings, settingsType);
 	}
 	public void loadSettings() {
 		try {

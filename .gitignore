@@ -1,7 +1,5 @@
 #JSON files for storing user data
-queueItems.json
-archivedItems.json
-settings.json
+*.json
 data
 
 #Photos added by user
@@ -10,14 +8,14 @@ data
 *.jpg
 *.webp
 images
-target
 
 #Bytecode
+target
 *.class
 *.jar
 
 #VS Code settings
-.vscode/settings.json
+.vscode
 
 #Other unnecessary files
 .DS_Store
