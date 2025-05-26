@@ -1,25 +1,24 @@
 package com.tj.queuebasedplanning.panels;
 
-import java.util.List;
-
-import java.time.ZonedDateTime;
-
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.GridLayout;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import java.time.ZonedDateTime;
+import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import com.tj.queuebasedplanning.QueueItem;
 import com.tj.queuebasedplanning.windows.MainWindow;
@@ -30,7 +29,6 @@ public class AddItemPanel extends JPanel {
     //From parent window
     private MainWindow parent;
 	private List<QueueItem> queueItems;
-    private JPanel contentPane;
 	private CardLayout contentPaneLayout;
 
     //Application settings
@@ -50,7 +48,6 @@ public class AddItemPanel extends JPanel {
 
     public AddItemPanel(MainWindow parent) {
         this.parent = parent;
-        contentPane = parent.getContentPane();
 		contentPaneLayout = parent.getContentPaneLayout();
 		queueItems = parent.getCurrentQueueItems();
 
@@ -142,9 +139,9 @@ public class AddItemPanel extends JPanel {
                 }
                 SuccessfullyAddedItemPanel messagePanel = new SuccessfullyAddedItemPanel(newItem.getName(), parent);
 
-                contentPane.add(messagePanel);
+                parent.getContentPane().add(messagePanel);
                 contentPaneLayout.addLayoutComponent(messagePanel, "Message Panel");
-                contentPaneLayout.show(contentPane, "Message Panel");
+                contentPaneLayout.show(parent.getContentPane(), "Message Panel");
 			}
 		});
 

@@ -1,25 +1,25 @@
 package com.tj.queuebasedplanning.panels;
 
-import java.util.List;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.ZonedDateTime;
+import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JTextPane;
-import javax.swing.SwingConstants;
 
 import com.tj.queuebasedplanning.QueueItem;
 import com.tj.queuebasedplanning.windows.MainWindow;
@@ -28,7 +28,6 @@ public class EditItemPanel extends JPanel {
 
     //From parent window
     private MainWindow parent;
-	private JPanel contentPane;
     private QueuePanel queuePanel;
 	private List<QueueItem> queueItems;
 	private CardLayout contentPaneLayout;
@@ -59,7 +58,6 @@ public class EditItemPanel extends JPanel {
 
     public EditItemPanel(MainWindow parent) {
         this.parent = parent;
-		contentPane = parent.getContentPane();
 		contentPaneLayout = parent.getContentPaneLayout();
 		queueItems = parent.getCurrentQueueItems();
 
@@ -170,7 +168,7 @@ public class EditItemPanel extends JPanel {
                 queuePanel.updateButtonStates();
                 parent.setQueuePanel(queuePanel);
 
-				contentPaneLayout.show(contentPane, "Queue Panel");
+				contentPaneLayout.show(parent.getContentPane(), "Queue Panel");
                 parent.setContentPaneLayout(contentPaneLayout);
 			}
 		});

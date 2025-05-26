@@ -5,23 +5,22 @@
 
 package com.tj.queuebasedplanning.windows;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import com.google.gson.reflect.TypeToken;
-
+import com.tj.queuebasedplanning.App;
 import com.tj.queuebasedplanning.Json;
 import com.tj.queuebasedplanning.QueueItem;
 import com.tj.queuebasedplanning.panels.AddItemPanel;
@@ -30,15 +29,6 @@ import com.tj.queuebasedplanning.panels.QueuePanel;
 import com.tj.queuebasedplanning.panels.SettingsPanel;
 
 public class MainWindow extends JFrame {
-
-	private JFrame frame;
-	public JFrame getFrame() { return frame; }
-	public void setFrame(JFrame value) { frame = value; }
-
-	private JPanel contentPane;
-	public JPanel getContentPane() { return contentPane; }
-	public void setContentPane(JPanel value) { contentPane = value; }
-
 	private CardLayout contentPaneLayout;
 	public CardLayout getContentPaneLayout() { return contentPaneLayout; }
 	public void setContentPaneLayout(CardLayout value) { contentPaneLayout = value; }
@@ -52,11 +42,11 @@ public class MainWindow extends JFrame {
 	public List<QueueItem> getArchivedItems() { return archivedItems; }
 	public void setArchivedItems(List<QueueItem> value) { archivedItems = value; }
 
-	//JSON handling
-	private java.lang.reflect.Type queueItemsType;
-	public java.lang.reflect.Type getQueueItemsType() { return queueItemsType; }
-	public void setQueueItemsType(java.lang.reflect.Type value) { queueItemsType = value; }
+	// JSON types
+	private final TypeToken<List<QueueItem>> queueItemsToken = new TypeToken<>() {};
+	private final TypeToken<Map<String,String>> settingsToken = new TypeToken<>() {};
 
+	//JSON handling
 	private Json queueItemsJsonHandler;
 	public Json getQueueItemsJsonHandler() { return queueItemsJsonHandler; }
 	public void setQueueItemsJsonHandler(Json value) { queueItemsJsonHandler = value; }
@@ -66,7 +56,6 @@ public class MainWindow extends JFrame {
 	public void setArchivedItemsJsonHandler(Json value) { archivedItemsJsonHandler = value; }
 
 	private Json settingsJsonHandler;
-	private java.lang.reflect.Type settingsType;
 
 	//panels
 	private AddItemPanel addItemPanel;
@@ -86,9 +75,9 @@ public class MainWindow extends JFrame {
 	public void setSettingsPanel(SettingsPanel value) { settingsPanel = value; }
 
 	//Application settings
-	private HashMap<String,String> settings;
-	public HashMap<String,String> getSettings() { return settings; }
-	public void setSettings(HashMap<String,String> value) { settings = value; }
+	private Map<String,String> settings;
+	public Map<String,String> getSettings() { return settings; }
+	public void setSettings(Map<String,String> value) { settings = value; }
 
 	private int displayedArchivedItemsCount; //The number of archived items that are displayed
 	public int getDisplayedArchivedItemsCount() { return displayedArchivedItemsCount; }
@@ -125,52 +114,32 @@ public class MainWindow extends JFrame {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		queueItemsJsonHandler = new Json("data/queueItems.json");
-		archivedItemsJsonHandler = new Json("data/archivedItems.json");
-		queueItemsType = new TypeToken<List<QueueItem>>() {}.getType();
+		queueItemsJsonHandler = new Json(App.DATA_DIR.resolve("queueItems.json"));
+		archivedItemsJsonHandler = new Json(App.DATA_DIR.resolve("archivedItems.json"));
+		settingsJsonHandler = new Json(App.DATA_DIR.resolve("settings.json"));
 
-		settingsJsonHandler = new Json("data/settings.json");
-		settingsType = new TypeToken<HashMap<String,String>>() {}.getType();
+		currentQueueItems = queueItemsJsonHandler.readObjectFromJson(queueItemsToken).orElse(new ArrayList<>());
+		archivedItems = archivedItemsJsonHandler.readObjectFromJson(queueItemsToken).orElse(new ArrayList<>());
+		settings = settingsJsonHandler.readObjectFromJson(settingsToken).orElse(new HashMap<>());
 
-		try {
-			currentQueueItems = queueItemsJsonHandler.readObjectFromJson(queueItemsType);
-		} catch (Exception e) {
-			currentQueueItems = new ArrayList<QueueItem>();
-			e.printStackTrace();
-		}
-		try {
-			archivedItems = archivedItemsJsonHandler.readObjectFromJson(queueItemsType);
-		} catch (Exception e) {
-			archivedItems = new ArrayList<QueueItem>();
-			e.printStackTrace();
-		}
-		try {
-			settings = settingsJsonHandler.readObjectFromJson(settingsType);
-		} catch (Exception e) {
-			settings = new HashMap<String,String>();
-		}
-
-		Timer saveChangesTimer = new Timer(autosaveInterval, new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (autosave) {
-					saveChanges();
-				}
+		Timer saveChangesTimer = new Timer(autosaveInterval, (ActionEvent e) -> {
+			if (autosave) {
+				saveChanges();
 			}
 		});
 
-		frame = new JFrame();
-		frame.pack();
 		contentPaneLayout = new CardLayout(0, 0);
-		contentPane = new JPanel(contentPaneLayout, rootPaneCheckingEnabled);
+		JPanel contentPane = new JPanel(contentPaneLayout, rootPaneCheckingEnabled);
 
 		addItemPanel = new AddItemPanel(this);
 		queuePanel = new QueuePanel(this);
 		editItemPanel = new EditItemPanel(this);
 		settingsPanel = new SettingsPanel(this);
 
-		frame.setBounds(100, 100, 960, 540);
-		frame.setMinimumSize(new Dimension(480, 360));
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		pack();
+		setBounds(100, 100, 960, 540);
+		setMinimumSize(new Dimension(480, 360));
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		class WindowClosingEvent extends WindowAdapter {
 			@Override
@@ -178,7 +147,7 @@ public class MainWindow extends JFrame {
 				saveChanges();
 			}
 		}
-		frame.addWindowListener(new WindowClosingEvent());
+		addWindowListener(new WindowClosingEvent());
 
 		contentPane.add(addItemPanel, "Add Item Panel");
 		contentPane.add(queuePanel, "Queue Panel");
@@ -193,17 +162,15 @@ public class MainWindow extends JFrame {
 		contentPane.setLayout(contentPaneLayout);
 		contentPaneLayout.show(contentPane, "Queue Panel");
 
-		frame.setContentPane(contentPane);
+		setContentPane(contentPane);
 		saveChangesTimer.start();
-
-		frame.setVisible(true);
 	}
 	public void saveChanges() {
-		queueItemsJsonHandler.writeObjectToJson(currentQueueItems, queueItemsType);
-		archivedItemsJsonHandler.writeObjectToJson(archivedItems, queueItemsType);
+		queueItemsJsonHandler.writeObjectToJson(currentQueueItems, queueItemsToken.getType());
+		archivedItemsJsonHandler.writeObjectToJson(archivedItems, queueItemsToken.getType());
 	}
 	public void saveSettings() {
-		settingsJsonHandler.writeObjectToJson(settings, settingsType);
+		settingsJsonHandler.writeObjectToJson(settings, settingsToken.getType());
 	}
 	public void loadSettings() {
 		try {

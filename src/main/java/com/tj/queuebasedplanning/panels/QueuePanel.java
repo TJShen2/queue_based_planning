@@ -44,8 +44,6 @@ public class QueuePanel extends JPanel {
 	//Swing/AWT components
 	//From parent window
 	private MainWindow parent;
-	private JFrame frame;
-	private JPanel contentPane;
 	private List<QueueItem> currentQueueItems;
 	private List<QueueItem> archivedItems;
 	private CardLayout contentPaneLayout;
@@ -86,8 +84,6 @@ public class QueuePanel extends JPanel {
 
 	public QueuePanel(MainWindow parent) {
 		this.parent = parent;
-		frame = parent.getFrame();
-		contentPane = parent.getContentPane();
 		contentPaneLayout = parent.getContentPaneLayout();
 		editItemPanel = parent.getEditItemPanel();
 		currentQueueItems = parent.getCurrentQueueItems();
@@ -182,14 +178,14 @@ public class QueuePanel extends JPanel {
 		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				parent.saveChanges();
-				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+				parent.dispatchEvent(new WindowEvent(parent, WindowEvent.WINDOW_CLOSING));
 			}
 		});
 
 		exitButton = new JButton("Exit Without Saving");
 		exitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+				parent.dispatchEvent(new WindowEvent(parent, WindowEvent.WINDOW_CLOSING));
 			}
 		});
 
@@ -246,7 +242,7 @@ public class QueuePanel extends JPanel {
 
 				editItemPanel = parent.getEditItemPanel();
 				editItemPanel.setupEditItemPanel(selectedIndex, selectedValue);
-				contentPaneLayout.show(contentPane, "Edit Item Panel");
+				contentPaneLayout.show(parent.getContentPane(), "Edit Item Panel");
 
 				parent.setEditItemPanel(editItemPanel);
 				parent.setContentPaneLayout(contentPaneLayout);
@@ -304,11 +300,7 @@ public class QueuePanel extends JPanel {
 		settingsButton = new JButton("Settings");
 		settingsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		actionButtonPanel.add(settingsButton);
-		settingsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				parent.getContentPaneLayout().show(parent.getContentPane(), "Settings Panel");
-			}
-		});
+		settingsButton.addActionListener((ActionEvent e) -> parent.getContentPaneLayout().show(parent.getContentPane(), "Settings Panel"));
 
 		getUpdatedSettings();
 		updateQueueList();

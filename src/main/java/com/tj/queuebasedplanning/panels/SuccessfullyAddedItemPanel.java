@@ -2,28 +2,24 @@ package com.tj.queuebasedplanning.panels;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 
 import com.tj.queuebasedplanning.windows.MainWindow;
 
-import javax.swing.JTextPane;
-import java.awt.GridBagConstraints;
-import javax.swing.JButton;
-import java.awt.Insets;
-
 public class SuccessfullyAddedItemPanel extends JPanel {
 
-	private JPanel parentContentPane;
 	private CardLayout parentContentPaneLayout;
 
 	public SuccessfullyAddedItemPanel(String item, MainWindow parent) {
 		//From parent window
-		parentContentPane = parent.getContentPane();
 		parentContentPaneLayout = parent.getContentPaneLayout();
 
 		//Set up the panel
@@ -56,11 +52,9 @@ public class SuccessfullyAddedItemPanel extends JPanel {
 		gbc_addButton.gridy = 1;
 		add(addButton, gbc_addButton);
 
-		addButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				parentContentPaneLayout.show(parentContentPane, "Add Item Panel");
-				parent.setContentPaneLayout(parentContentPaneLayout);
-			}
+		addButton.addActionListener((ActionEvent e) -> {
+			parentContentPaneLayout.show(parent.getContentPane(), "Add Item Panel");
+			parent.setContentPaneLayout(parentContentPaneLayout);
 		});
 
 		JButton backToQueueButton = new JButton("Back to Queue");
@@ -71,11 +65,9 @@ public class SuccessfullyAddedItemPanel extends JPanel {
 		gbc_backToQueueButton.gridy = 1;
 		add(backToQueueButton, gbc_backToQueueButton);
 
-		backToQueueButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				parentContentPaneLayout.show(parentContentPane, "Queue Panel");
-				parent.setContentPaneLayout(parentContentPaneLayout);
-			}
+		backToQueueButton.addActionListener((ActionEvent e) -> {
+			parentContentPaneLayout.show(parent.getContentPane(), "Queue Panel");
+			parent.setContentPaneLayout(parentContentPaneLayout);
 		});
 	}
 }

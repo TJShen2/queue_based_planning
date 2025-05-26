@@ -5,7 +5,7 @@ import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -27,7 +27,7 @@ public class SettingsPanel extends JPanel {
     private MainWindow parent;
 
     //Application settings
-    private HashMap<String,String> settings;
+    private Map<String,String> settings;
 	private int displayedArchivedItemsCount; //The number of archived items that are displayed
 	private int displayedCurrentQueueItemsCount; //The number of current queue items that are displayed
 	private Boolean archiveMode; //Whether the displayed items are the archived items

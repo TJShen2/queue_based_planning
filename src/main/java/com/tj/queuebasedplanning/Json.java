@@ -5,11 +5,16 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.Path;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.Strictness;
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonWriter;
 
 public class Json {
@@ -21,7 +26,7 @@ public class Json {
     private FileReader fileReader;
     private JsonWriter jsonSerializer;
 
-    public Json(String pathname) {
+    public Json(Path path) {
 
         jsonBuilder = new GsonBuilder();
         jsonBuilder.setPrettyPrinting();
@@ -31,14 +36,14 @@ public class Json {
         jsonBuilder.registerTypeAdapter(ZonedDateTime.class, new ZonedDateTimeAdapter());
 
         json = jsonBuilder.create();
-        jsonFile = new File(pathname);
+        jsonFile = path.toFile();
 
         try {
             if (!jsonFile.exists()) {
                 jsonFile.createNewFile();
-                FileWriter fileWriter = new FileWriter(jsonFile);
-                fileWriter.write("[]");
-                fileWriter.close();
+                try (FileWriter fileWriter = new FileWriter(jsonFile)) {
+                    fileWriter.write("[]");
+                }
             }
 
             fileReader = new FileReader(jsonFile);
@@ -46,22 +51,31 @@ public class Json {
             e.printStackTrace();
         }
     }
-    public void writeObjectToJson(Object objectToWrite, Type type) {
+
+    /**
+     * Writes an object to a JSON file.
+     *
+     * @param objectToWrite The object to write to the JSON file.
+     * @param type          The type of the object to write.
+     * @return true if the write was successful, false otherwise.
+     */
+    public boolean writeObjectToJson(Object objectToWrite, Type type) {
         try {
             jsonSerializer = new JsonWriter(new FileWriter(jsonFile));
             json.toJson(objectToWrite, type, jsonSerializer);
             jsonSerializer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            return true;
+        } catch (IOException e) {
+            return false;
         }
     }
-    public <T> T readObjectFromJson(Type type) {
+    public <T> Optional<T> readObjectFromJson(TypeToken<T> token) {
+        Type type = token.getType();
         try {
             T object = json.fromJson(fileReader, type);
-            return object;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            return Optional.of(object);
+        } catch (JsonIOException | JsonSyntaxException e) {
+            return Optional.empty();
         }
     }
 }
