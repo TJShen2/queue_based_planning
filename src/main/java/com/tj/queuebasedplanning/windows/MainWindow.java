@@ -137,8 +137,8 @@ public class MainWindow extends JFrame {
 		settingsPanel = new SettingsPanel(this);
 
 		pack();
-		setBounds(100, 100, 960, 540);
-		setMinimumSize(new Dimension(480, 360));
+		setBounds(100, 100, 1300, 300);
+		setMinimumSize(new Dimension(1300, 200));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		class WindowClosingEvent extends WindowAdapter {

@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import com.tj.queuebasedplanning.windows.MainWindow;
 
 public class App {
+	// TODO: Keep copies of previous versions of user data in case of incorrect manipulation.
 	public static final String APP_NAME = "queue-based-planning";
 	public static final Path DATA_DIR = getDataDir();
 

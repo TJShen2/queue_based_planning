@@ -1,7 +1,6 @@
 package com.tj.queuebasedplanning.panels;
 
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -63,7 +62,6 @@ public class EditItemPanel extends JPanel {
 
         //Set up the main panel
         setBounds(100, 100, 960, 540);
-        setBackground(new Color(255, 246, 187));
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 
         //Set up layout manager

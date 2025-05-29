@@ -1,7 +1,6 @@
 package com.tj.queuebasedplanning.panels;
 
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -34,18 +33,6 @@ public class AddItemPanel extends JPanel {
     //Application settings
     private Boolean displayPicture;
 
-    //Window components
-    //Panels
-    private JPanel infoEntryPanel;
-
-    //Buttons
-    private JButton addButton;
-    private JButton cancelButton;
-
-    //Text panes
-    private JTextPane nameTextPane;
-    private JTextPane detailsTextPane;
-
     public AddItemPanel(MainWindow parent) {
         this.parent = parent;
 		contentPaneLayout = parent.getContentPaneLayout();
@@ -53,7 +40,6 @@ public class AddItemPanel extends JPanel {
 
         //Set up the main panel
         setBounds(100, 100, 960, 540);
-		setBackground(new Color(255, 246, 187));
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 
         //Content pane constraints
@@ -63,7 +49,7 @@ public class AddItemPanel extends JPanel {
         setLayout(gbl_contentPane);
 
         //Set up panels
-        infoEntryPanel = new JPanel();
+        JPanel infoEntryPanel = new JPanel();
         GridBagConstraints gbc_infoEntryPanel = new GridBagConstraints();
         gbc_infoEntryPanel.weighty = 1.0;
         gbc_infoEntryPanel.insets = new Insets(0, 0, 5, 5);
@@ -91,14 +77,14 @@ public class AddItemPanel extends JPanel {
         JLabel detailsLabel = new JLabel("Details:");
 
         //Text panes
-        nameTextPane = new JTextPane();
+        JTextPane nameTextPane = new JTextPane();
         nameTextPane.setPreferredSize(new Dimension(200, 50));
 
-        detailsTextPane = new JTextPane();
+        JTextPane detailsTextPane = new JTextPane();
         detailsTextPane.setPreferredSize(new Dimension(200, 50));
 
         //Buttons
-        addButton = new JButton("Add");
+        JButton addButton = new JButton("Add");
         GridBagConstraints gbc_addButton = new GridBagConstraints();
         gbc_addButton.insets = new Insets(0, 0, 5, 5);
         gbc_addButton.gridx = 0;
@@ -145,7 +131,7 @@ public class AddItemPanel extends JPanel {
 			}
 		});
 
-        cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				contentPaneLayout.show(parent.getContentPane(), "Queue Panel");

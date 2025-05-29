@@ -1,7 +1,6 @@
 package com.tj.queuebasedplanning.panels;
 
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -23,7 +22,6 @@ public class SuccessfullyAddedItemPanel extends JPanel {
 		parentContentPaneLayout = parent.getContentPaneLayout();
 
 		//Set up the panel
-		setBackground(new Color(255, 246, 187));
 		setBounds(100, 100, 960, 540);
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 

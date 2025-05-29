@@ -7,7 +7,6 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Component;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,13 +18,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.JButton;
-//import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
@@ -56,7 +53,7 @@ public class QueuePanel extends JPanel {
 	private JPanel detailsDatePanel;
 
 	//Scroll panes
-	private JScrollPane queueLabelScrollPane;
+	private JScrollPane queueItemsScrollPane;
 	private JScrollPane detailsDateScrollPane;
 
 	//Text panes
@@ -68,19 +65,11 @@ public class QueuePanel extends JPanel {
 	private JButton removeSelectedItemButton;
 	private JButton archiveSelectedItemButton;
 	private JButton editSelectedItemButton;
-	private JButton exitButton;
 	private JButton moveSelectedItemToBackOfQueueButton;
-	private JButton saveButton;
 
 	//Lists
 	private JList<String> queueItemsList;
 	private ListSelectionModel queueItemsListSelectionModel;
-
-	//Labels
-	private JLabel titleLabel;
-	private JLabel detailsLabel;
-	private JLabel lastEditedLabel;
-	private JButton settingsButton;
 
 	public QueuePanel(MainWindow parent) {
 		this.parent = parent;
@@ -97,8 +86,6 @@ public class QueuePanel extends JPanel {
 		}
 
 		//Set up the main panel
-		setBackground(new Color(255, 246, 187));
-		setBounds(100, 100, 960, 540);
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		//Set up layout
@@ -106,32 +93,31 @@ public class QueuePanel extends JPanel {
 		setLayout(gbl_contentPane);
 
 		//Set up scroll panes
-		queueLabelScrollPane = new JScrollPane();
+		queueItemsScrollPane = new JScrollPane();
 		GridBagConstraints gbc_queueLabelScrollPane = new GridBagConstraints();
-		gbc_queueLabelScrollPane.weighty = 1.0;
-		gbc_queueLabelScrollPane.weightx = 1.0;
-		gbc_queueLabelScrollPane.gridheight = 2;
+		gbc_queueLabelScrollPane.weighty = 1;
+		gbc_queueLabelScrollPane.weightx = 1;
 		gbc_queueLabelScrollPane.fill = GridBagConstraints.BOTH;
 		gbc_queueLabelScrollPane.insets = new Insets(5, 5, 5, 5);
-		gbc_queueLabelScrollPane.gridx = 1;
-		gbc_queueLabelScrollPane.gridy = 3;
+		gbc_queueLabelScrollPane.gridx = 0;
+		gbc_queueLabelScrollPane.gridy = 1;
 
 		detailsDateScrollPane = new JScrollPane();
 		GridBagConstraints gbc_detailsDateScrollPane = new GridBagConstraints();
-		gbc_detailsDateScrollPane.weighty = 1.0;
-		gbc_detailsDateScrollPane.weightx = 1.0;
+		gbc_detailsDateScrollPane.weighty = 1;
+		gbc_detailsDateScrollPane.weightx = 1;
 		gbc_detailsDateScrollPane.fill = GridBagConstraints.BOTH;
 		gbc_detailsDateScrollPane.insets = new Insets(5, 5, 5, 5);
-		gbc_detailsDateScrollPane.gridx = 3;
-		gbc_detailsDateScrollPane.gridy = 3;
+		gbc_detailsDateScrollPane.gridx = 1;
+		gbc_detailsDateScrollPane.gridy = 1;
 
 		//Set up panels
 		JPanel titleLabelPanel = new JPanel();
 		GridBagConstraints gbc_titleLabelPanel = new GridBagConstraints();
-		gbc_titleLabelPanel.weighty = 1.0;
-		gbc_titleLabelPanel.weightx = 1.0;
-		gbc_titleLabelPanel.gridwidth = 4;
-		gbc_titleLabelPanel.gridy = 1;
+		gbc_titleLabelPanel.weighty = 0;
+		gbc_titleLabelPanel.weightx = 1;
+		gbc_titleLabelPanel.gridwidth = 2;
+		gbc_titleLabelPanel.gridy = 0;
 		gbc_titleLabelPanel.insets = new Insets(5, 5, 5, 5);
 		gbc_titleLabelPanel.gridx = 0;
 		titleLabelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 1, 1));
@@ -139,42 +125,33 @@ public class QueuePanel extends JPanel {
 		queueItemsPanel = new JPanel();
 		queueItemsPanel.setLayout(new BorderLayout(0, 0));
 
-		savePanel = new JPanel();
-		GridBagConstraints gbc_saveAndExitPanel = new GridBagConstraints();
-		gbc_saveAndExitPanel.weighty = 1.0;
-		gbc_saveAndExitPanel.weightx = 1.0;
-		gbc_saveAndExitPanel.insets = new Insets(5, 5, 0, 0);
-		gbc_saveAndExitPanel.anchor = GridBagConstraints.SOUTHEAST;
-		gbc_saveAndExitPanel.gridx = 3;
-		gbc_saveAndExitPanel.gridy = 6;
-
-		JPanel actionButtonPanel = new JPanel();
-		GridBagConstraints gbc_actionButtonPanel = new GridBagConstraints();
-		gbc_actionButtonPanel.fill = GridBagConstraints.BOTH;
-		gbc_actionButtonPanel.weighty = 1.0;
-		gbc_actionButtonPanel.weightx = 1.0;
-		gbc_actionButtonPanel.insets = new Insets(5, 5, 5, 0);
-		gbc_actionButtonPanel.gridx = 3;
-		gbc_actionButtonPanel.gridy = 4;
-
-		actionButtonPanel.setLayout(new BoxLayout(actionButtonPanel, BoxLayout.Y_AXIS));
+		JPanel operationPanel = new JPanel();
+		operationPanel.setLayout(new BoxLayout(operationPanel, BoxLayout.X_AXIS));
+		GridBagConstraints gbc_operationPanel = new GridBagConstraints();
+		gbc_operationPanel.weighty = 0;
+		gbc_operationPanel.weightx = 1.0;
+		gbc_operationPanel.fill = GridBagConstraints.HORIZONTAL;
+		gbc_operationPanel.insets = new Insets(5, 5, 5, 5);
+		gbc_operationPanel.gridwidth = 2;
+		gbc_operationPanel.gridx = 0;
+		gbc_operationPanel.gridy = 2;
 
 		detailsDatePanel = new JPanel();
 		detailsDatePanel.setLayout(new BoxLayout(detailsDatePanel, BoxLayout.Y_AXIS));
 
 		//Set up labels
-		titleLabel = new JLabel("Main Queue");
+		JLabel titleLabel = new JLabel("Main Queue");
 
-		detailsLabel = new JLabel("Details:");
+		JLabel detailsLabel = new JLabel("Details:");
 		detailsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		detailsLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-		lastEditedLabel = new JLabel("Last Edited:");
+		JLabel lastEditedLabel = new JLabel("Last Edited:");
 		lastEditedLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lastEditedLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		//Set up buttons
-		saveButton = new JButton("Save and Exit");
+		JButton saveButton = new JButton("Save and Exit");
 		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				parent.saveChanges();
@@ -182,7 +159,7 @@ public class QueuePanel extends JPanel {
 			}
 		});
 
-		exitButton = new JButton("Exit Without Saving");
+		JButton exitButton = new JButton("Exit Without Saving");
 		exitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				parent.dispatchEvent(new WindowEvent(parent, WindowEvent.WINDOW_CLOSING));
@@ -262,6 +239,10 @@ public class QueuePanel extends JPanel {
 			}
 		});
 
+		JButton settingsButton = new JButton("Settings");
+		settingsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		settingsButton.addActionListener((ActionEvent e) -> parent.getContentPaneLayout().show(parent.getContentPane(), "Settings Panel"));
+
 		//Set up text panes
 		detailsTextPane = new JTextPane();
 		detailsTextPane.setEditable(false);
@@ -270,16 +251,16 @@ public class QueuePanel extends JPanel {
 		detailsTextPane.setEditable(false);
 
 		//Add components to panels
-		savePanel.add(saveButton);
-		savePanel.add(exitButton);
-
 		titleLabelPanel.add(titleLabel);
 
-		actionButtonPanel.add(addItemButton);
-		actionButtonPanel.add(archiveSelectedItemButton);
-		actionButtonPanel.add(moveSelectedItemToBackOfQueueButton);
-		actionButtonPanel.add(editSelectedItemButton);
-		actionButtonPanel.add(removeSelectedItemButton);
+		operationPanel.add(addItemButton);
+		operationPanel.add(archiveSelectedItemButton);
+		operationPanel.add(moveSelectedItemToBackOfQueueButton);
+		operationPanel.add(editSelectedItemButton);
+		operationPanel.add(removeSelectedItemButton);
+		operationPanel.add(settingsButton);
+		operationPanel.add(saveButton);
+		operationPanel.add(exitButton);
 
 		detailsDatePanel.add(detailsLabel);
 		detailsDatePanel.add(detailsTextPane);
@@ -287,20 +268,14 @@ public class QueuePanel extends JPanel {
 		detailsDatePanel.add(lastEditedTextPane);
 
 		//Add panels to scroll panes
-		queueLabelScrollPane.setViewportView(queueItemsPanel);
+		queueItemsScrollPane.setViewportView(queueItemsPanel);
 		detailsDateScrollPane.setViewportView(detailsDatePanel);
 
 		//Add top-level containers (panels and scroll panes) to main panel
 		add(detailsDateScrollPane, gbc_detailsDateScrollPane);
-		add(queueLabelScrollPane, gbc_queueLabelScrollPane);
+		add(queueItemsScrollPane, gbc_queueLabelScrollPane);
 		add(titleLabelPanel, gbc_titleLabelPanel);
-		add(actionButtonPanel, gbc_actionButtonPanel);
-		add(savePanel, gbc_saveAndExitPanel);
-
-		settingsButton = new JButton("Settings");
-		settingsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		actionButtonPanel.add(settingsButton);
-		settingsButton.addActionListener((ActionEvent e) -> parent.getContentPaneLayout().show(parent.getContentPane(), "Settings Panel"));
+		add(operationPanel, gbc_operationPanel);
 
 		getUpdatedSettings();
 		updateQueueList();

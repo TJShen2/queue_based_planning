@@ -1,12 +1,13 @@
 package com.tj.queuebasedplanning.panels;
 
-import java.awt.Color;
 import java.awt.Component;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -16,8 +17,6 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import com.tj.queuebasedplanning.windows.MainWindow;
-import javax.swing.BoxLayout;
-import java.awt.GridBagConstraints;
 
 public class SettingsPanel extends JPanel {
 
@@ -61,7 +60,6 @@ public class SettingsPanel extends JPanel {
 		getUpdatedSettings();
 
 		//Set up the main panel
-		setBackground(new Color(255, 246, 187));
 		setBounds(100, 100, 960, 540);
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 
